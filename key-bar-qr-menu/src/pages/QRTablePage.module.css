@@ -1,0 +1,488 @@
+/* 📱 СОВРЕМЕННАЯ QR СТРАНИЦА */
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--gradient-primary);
+}
+
+.loadingContent {
+  text-align: center;
+  color: white;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.loadingContent h3 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.loadingContent p {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Error State */
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--gradient-danger);
+}
+
+.errorContent {
+  text-align: center;
+  color: white;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.errorIcon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+.errorContent h2 {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.errorContent p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.retryButton {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.retryButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Success State */
+.success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--gradient-success);
+}
+
+.successContent {
+  text-align: center;
+  color: white;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.successIcon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+.successContent h2 {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.successContent p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.tableInfo {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 16px 24px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.tableIcon {
+  font-size: 1.5rem;
+}
+
+.newOrderButton {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 16px 32px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.newOrderButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.buttonIcon {
+  font-size: 1.2rem;
+  animation: bounce 2s infinite;
+}
+
+/* Header - Лофт стиль */
+.header {
+  background: rgba(255, 248, 220, 0.8);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(210, 105, 30, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 69, 19, 0.02) 2px,
+      rgba(139, 69, 19, 0.02) 4px
+    );
+  border-radius: var(--radius-xl);
+  pointer-events: none;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.tableIconWrapper {
+  width: 80px;
+  height: 80px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+}
+
+.tableIcon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.tableDetails {
+  flex: 1;
+}
+
+.tableTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #8b4513;
+}
+
+.tableNumber {
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tableSubtitle {
+  font-size: 1.1rem;
+  color: rgba(139, 69, 19, 0.8);
+  margin: 0;
+}
+
+.qrInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(255, 248, 220, 0.3);
+  border: 2px solid rgba(210, 105, 30, 0.3);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+}
+
+.qrIcon {
+  font-size: 2rem;
+}
+
+.qrText {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #8b4513;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Content */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Menu Section - Лофт стиль */
+.menuSection {
+  background: rgba(255, 248, 220, 0.8);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(210, 105, 30, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.menuSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 69, 19, 0.02) 2px,
+      rgba(139, 69, 19, 0.02) 4px
+    );
+  border-radius: var(--radius-xl);
+  pointer-events: none;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #8b4513;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sectionIcon {
+  font-size: 1.8rem;
+  animation: bounce 2s infinite;
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: rgba(139, 69, 19, 0.8);
+  margin: 0;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.menuItemWrapper {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.emptyMenu {
+  text-align: center;
+  padding: 60px 20px;
+  color: white;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+.emptyMenu h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.emptyMenu p {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Order Section */
+.orderSection {
+  position: sticky;
+  top: 100px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .orderSection {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .header {
+    padding: 20px;
+  }
+  
+  .headerContent {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .tableIconWrapper {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .tableIcon {
+    font-size: 2rem;
+  }
+  
+  .tableTitle {
+    font-size: 2rem;
+  }
+  
+  .menuSection {
+    padding: 20px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .menuGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .header {
+    padding: 15px;
+  }
+  
+  .tableIconWrapper {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .tableIcon {
+    font-size: 1.5rem;
+  }
+  
+  .tableTitle {
+    font-size: 1.75rem;
+  }
+  
+  .menuSection {
+    padding: 15px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+}

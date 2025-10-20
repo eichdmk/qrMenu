@@ -1,0 +1,179 @@
+/* 🏭 МИНИМАЛИСТИЧНЫЙ ФУТЕР */
+
+.footer {
+  background: #2c1810;
+  color: #f5f5dc;
+  margin-top: 80px;
+  padding-bottom: 120px;
+  position: relative;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+/* Brand Section */
+.brandSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.brandLogo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logoIcon {
+  font-size: 2.5rem;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandText h3 {
+  color: #cd853f;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.brandSubtitle {
+  color: #a89784;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.brandSection p {
+  color: #f5f5dc;
+  margin: 0;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Social Links */
+.social {
+  display: flex;
+  gap: 15px;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(205, 133, 63, 0.2);
+  border: 1px solid rgba(205, 133, 63, 0.3);
+  border-radius: 50%;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.socialLink:hover {
+  background: #cd853f;
+  border-color: #cd853f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(205, 133, 63, 0.3);
+}
+
+.socialIcon {
+  font-size: 1.2rem;
+}
+
+/* Section Styles */
+.section h4 {
+  color: #cd853f;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.section p {
+  color: #f5f5dc;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Copyright */
+.copyright {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 1px solid rgba(205, 133, 63, 0.2);
+  color: #a89784;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer {
+    padding-bottom: 140px;
+  }
+  
+  .content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .brandLogo {
+    justify-content: center;
+  }
+  
+  .social {
+    justify-content: center;
+  }
+  
+  .container {
+    padding: 40px 15px 25px;
+  }
+  
+  .brandText h3 {
+    font-size: 1.3rem;
+  }
+  
+  .logoIcon {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 30px 10px 20px;
+  }
+  
+  .brandText h3 {
+    font-size: 1.3rem;
+  }
+  
+  .brandSubtitle {
+    font-size: 0.8rem;
+  }
+  
+  .socialLink {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .socialIcon {
+    font-size: 1rem;
+  }
+}

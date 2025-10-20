@@ -1,0 +1,422 @@
+/* 📅 СТРАНИЦА БРОНИРОВАНИЯ - МИНИМАЛИСТИЧНЫЙ СТИЛЬ */
+
+.reservationPage {
+  min-height: 100vh;
+  padding: 40px 0 80px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.header {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.headerIcon {
+  font-size: 3.5rem;
+}
+
+.headerText {
+  flex: 1;
+}
+
+.headerTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.headerSubtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Main Content */
+.mainContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.formSection {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.formSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.sectionIcon {
+  font-size: 1.2rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.formInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: white;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
+}
+
+.formInput::placeholder {
+  color: var(--text-light);
+}
+
+.submitButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: #cd853f;
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(205, 133, 63, 0.3);
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #d2691e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonIcon {
+  font-size: 1.2rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tables Section */
+.tablesSection {
+  position: sticky;
+  top: 100px;
+  align-self: start;
+}
+
+.availabilityInfo {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.availabilityTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.titleIcon {
+  font-size: 1.3rem;
+}
+
+.tablesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.tableCard {
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid;
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableCard.available {
+  border-color: rgba(45, 134, 89, 0.3);
+  background: rgba(45, 134, 89, 0.05);
+}
+
+.tableCard.unavailable {
+  border-color: rgba(185, 28, 28, 0.3);
+  background: rgba(185, 28, 28, 0.05);
+}
+
+.tableCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.tableName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.tableSeats {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.tableStatus {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.statusBadge.availableBadge {
+  background: #2d8659;
+  color: white;
+}
+
+.statusBadge.unavailableBadge {
+  background: #b91c1c;
+  color: white;
+}
+
+/* Success Page */
+.successPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2d8659 0%, #3da66d 100%);
+}
+
+.successContent {
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  padding: 40px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.successIcon {
+  font-size: 5rem;
+  margin-bottom: 24px;
+}
+
+.successTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.successInfo {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.infoRow:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.infoLabel,
+.infoValue {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.homeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.homeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reservationPage {
+    padding: 20px 0 60px;
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
+  
+  .header {
+    padding: 24px;
+  }
+  
+  .headerContent {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .headerIcon {
+    font-size: 3rem;
+  }
+  
+  .headerTitle {
+    font-size: 2rem;
+  }
+  
+  .mainContent {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .formSection,
+  .availabilityInfo {
+    padding: 20px;
+  }
+  
+  .tablesSection {
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 20px;
+  }
+  
+  .headerIcon {
+    font-size: 2.5rem;
+  }
+  
+  .headerTitle {
+    font-size: 1.75rem;
+  }
+  
+  .formSection,
+  .availabilityInfo {
+    padding: 16px;
+  }
+  
+  .successTitle {
+    font-size: 2rem;
+  }
+}

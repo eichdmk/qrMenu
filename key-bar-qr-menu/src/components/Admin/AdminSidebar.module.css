@@ -1,0 +1,82 @@
+.sidebar {
+  width: 250px;
+  background-color: var(--card-bg);
+  box-shadow: 2px 0 8px var(--shadow);
+  height: calc(100vh - 70px);
+  position: sticky;
+  top: 70px;
+}
+
+.header {
+  padding: 30px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h2 {
+  color: var(--text);
+  font-size: 1.3rem;
+}
+
+.nav {
+  padding: 20px 0;
+}
+
+.navButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  background: none;
+  color: var(--text);
+  text-align: left;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.navButton:hover {
+  background-color: var(--bg);
+  border-left-color: var(--primary);
+}
+
+.navButton.active {
+  background-color: rgba(255, 153, 0, 0.1);
+  border-left-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 1.3rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    top: 0;
+  }
+
+  .nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  .navButton {
+    flex-direction: column;
+    min-width: 100px;
+    padding: 10px;
+    text-align: center;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .navButton:hover,
+  .navButton.active {
+    border-left: none;
+    border-bottom-color: var(--primary);
+  }
+}

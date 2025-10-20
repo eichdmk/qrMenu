@@ -1,0 +1,268 @@
+/* 🏭 ЛОФТ НАВБАР */
+
+.navbar {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border-bottom: 2px solid rgba(210, 105, 30, 0.2);
+  box-shadow: var(--shadow-lg);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+/* Логотип */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.logo:hover {
+  transform: translateY(-2px);
+}
+
+.logoIcon {
+  font-size: 2rem;
+  animation: bounce 2s infinite;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brandName {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #d2691e;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(210, 105, 30, 0.3);
+}
+
+.brandSubtitle {
+  font-size: 0.7rem;
+  color: #8b4513;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: -2px;
+}
+
+/* Навигационные ссылки */
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: #8b4513;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.navLink::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.navLink:hover::before {
+  left: 100%;
+}
+
+.navLink:hover {
+  background: rgba(255, 248, 220, 0.3);
+  color: #d2691e;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.navIcon {
+  font-size: 1.1rem;
+  animation: bounce 2s infinite;
+}
+
+/* Корзина */
+.cartLink {
+  position: relative;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--gradient-danger);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+  animation: pulse 2s infinite;
+}
+
+/* Кнопка выхода */
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 248, 220, 0.2);
+  color: #8b4513;
+  font-weight: 600;
+  border: 2px solid rgba(210, 105, 30, 0.3);
+  border-radius: var(--radius);
+  transition: var(--transition);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 248, 220, 0.4);
+  color: #d2691e;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(210, 105, 30, 0.5);
+}
+
+/* Мобильное меню */
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 248, 220, 0.2);
+  border: 2px solid rgba(210, 105, 30, 0.3);
+  border-radius: var(--radius);
+  padding: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.menuToggle:hover {
+  background: rgba(255, 248, 220, 0.4);
+  border-color: rgba(210, 105, 30, 0.5);
+}
+
+.menuToggle span {
+  width: 20px;
+  height: 2px;
+  background: #8b4513;
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.menuToggle:hover span {
+  background: #d2691e;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .container {
+    height: 70px;
+    padding: 0 15px;
+  }
+  
+  .menuToggle {
+    display: flex;
+  }
+
+  .navLinks {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(255, 248, 220, 0.95);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: var(--shadow-xl);
+    border-top: 2px solid rgba(210, 105, 30, 0.2);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 12px;
+  }
+
+  .navLinks.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .navLinks li {
+    width: 100%;
+  }
+  
+  .navLink {
+    width: 100%;
+    justify-content: center;
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+  
+  .logoutBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+  
+  .brandName {
+    font-size: 1.5rem;
+  }
+  
+  .brandSubtitle {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  .brandName {
+    font-size: 1.3rem;
+  }
+  
+  .logoIcon {
+    font-size: 1.5rem;
+  }
+}

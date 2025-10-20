@@ -1,0 +1,156 @@
+/* 🏷️ STICKY ФИЛЬТР КАТЕГОРИЙ - МИНИМАЛИСТИЧНЫЙ */
+
+.filterContainer {
+  position: sticky;
+  top: 80px;
+  z-index: 100;
+  margin-bottom: 40px;
+  padding: 16px 0;
+  background: var(--bg-main);
+}
+
+.filterWrapper {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  padding: 12px 20px;
+  background: white;
+  border-radius: 50px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  margin: 0 auto;
+  position: relative;
+  
+  /* Плавная прокрутка */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
+  /* Показываем тонкий скроллбар */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-secondary);
+  
+  /* Градиентные тени для индикации прокрутки */
+  background-image: 
+    linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+    linear-gradient(to right, rgba(255, 255, 255, 0), white 70%),
+    linear-gradient(to right, rgba(210, 105, 30, 0.1), rgba(210, 105, 30, 0)),
+    linear-gradient(to left, rgba(210, 105, 30, 0.1), rgba(210, 105, 30, 0));
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.filterWrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.filterWrapper::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 2px;
+}
+
+.filterWrapper::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.filterWrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-light);
+}
+
+/* Filter Button */
+.filterButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: white;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+}
+
+.filterButton:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.filterButton.active {
+  background: #cd853f;
+  color: white;
+  border-color: #cd853f;
+}
+
+.buttonIcon {
+  font-size: 1rem;
+}
+
+.buttonText {
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filterContainer {
+    top: 70px;
+    padding: 12px 0;
+    margin-bottom: 30px;
+  }
+  
+  .filterWrapper {
+    padding: 10px 16px;
+    gap: 8px;
+    max-width: calc(100vw - 30px);
+    border-radius: 30px;
+  }
+  
+  .filterButton {
+    padding: 9px 16px;
+    font-size: 0.9rem;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  
+  .buttonIcon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .filterContainer {
+    padding: 10px 0;
+  }
+  
+  .filterWrapper {
+    padding: 8px 12px;
+    gap: 6px;
+    max-width: calc(100vw - 20px);
+  }
+  
+  .filterButton {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    gap: 5px;
+  }
+  
+  .buttonIcon {
+    font-size: 0.95rem;
+  }
+  
+  .buttonText {
+    font-size: 0.85rem;
+  }
+}

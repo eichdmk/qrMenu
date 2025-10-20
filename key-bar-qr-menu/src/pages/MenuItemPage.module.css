@@ -1,0 +1,175 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.backButton {
+  background: none;
+  color: var(--text);
+  font-size: 1rem;
+  padding: 10px 0;
+  margin-bottom: 30px;
+  transition: color 0.3s ease;
+}
+
+.backButton:hover {
+  color: var(--primary);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.imageSection img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.infoSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.description {
+  color: var(--text-light);
+  line-height: 1.8;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+.ingredients {
+  margin-bottom: 30px;
+}
+
+.ingredients h3 {
+  margin-bottom: 15px;
+  color: var(--text);
+}
+
+.ingredients ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ingredients li {
+  padding: 8px 0;
+  color: var(--text-light);
+  border-bottom: 1px solid var(--border);
+}
+
+.ingredients li:last-child {
+  border-bottom: none;
+}
+
+.priceSection {
+  margin-bottom: 30px;
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.quantitySection {
+  margin-bottom: 30px;
+}
+
+.quantitySection label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.quantityControls button {
+  width: 40px;
+  height: 40px;
+  background-color: var(--bg);
+  color: var(--text);
+  border-radius: 8px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.quantityControls button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.quantityControls span {
+  font-size: 1.5rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+.addButton {
+  width: 100%;
+  padding: 18px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+}
+
+.notFound {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.notFound h2 {
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.notFound button {
+  padding: 12px 24px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 20px;
+  }
+
+  .infoSection h1 {
+    font-size: 2rem;
+  }
+
+  .price {
+    font-size: 2rem;
+  }
+}
