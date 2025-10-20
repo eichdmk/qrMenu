@@ -271,17 +271,23 @@ cd backend
 npm install
 ```
 
-3. Создайте файл `.env` с переменными окружения:
+3. Создайте файл `.env` на основе `.env.example`:
+```bash
+cp .env.example .env
+```
+Затем отредактируйте `.env` с вашими реальными данными:
 ```env
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=keybar_db
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=your_super_secret_jwt_key
 ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
+ADMIN_PASSWORD=secure_password_123
 ```
+
+> ⚠️ **Важно:** Никогда не коммитьте `.env` файл в Git! Он уже добавлен в `.gitignore`.
 
 4. Создайте базу данных PostgreSQL и выполните SQL скрипт из `init.sql`
 
