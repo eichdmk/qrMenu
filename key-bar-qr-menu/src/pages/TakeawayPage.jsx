@@ -7,7 +7,7 @@ import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import CartPreview from "../components/Cart/CartPreview";
 import { toast } from "react-toastify";
-import { useScrollToTop } from "../hooks/useScrollToTop";
+import { useScrollToTop, useScrollToTopOnChange } from "../hooks/useScrollToTop";
 import styles from "./TakeawayPage.module.css";
 
 function TakeawayPage() {
@@ -28,6 +28,9 @@ function TakeawayPage() {
 
   // Скроллим наверх при загрузке страницы
   useScrollToTop();
+  
+  // Скроллим наверх при смене категории
+  useScrollToTopOnChange(activeCategory);
 
   const handleCustomerInfoChange = (e) => {
     const { name, value } = e.target;

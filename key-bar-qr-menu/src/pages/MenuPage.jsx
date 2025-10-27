@@ -2,7 +2,7 @@ import { useMenuPaginated } from "../hooks/useMenuPaginated";
 import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import CartPreview from "../components/Cart/CartPreview";
-import { useScrollToTop } from "../hooks/useScrollToTop";
+import { useScrollToTop, useScrollToTopOnChange } from "../hooks/useScrollToTop";
 import styles from "./MenuPage.module.css";
 
 function MenuPage() {
@@ -18,6 +18,9 @@ function MenuPage() {
 
   // Скроллим наверх при загрузке страницы
   useScrollToTop();
+  
+  // Скроллим наверх при смене категории
+  useScrollToTopOnChange(activeCategory);
 
   if (loading) {
     return (
