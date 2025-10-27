@@ -20,7 +20,6 @@ export const useOrders = () => {
 
   const createOrder = async (data) => {
     try {
-      // Преобразуем данные корзины в формат, ожидаемый API
       const orderData = {
         table_id: data.tableId,
         reservation_id: data.reservationId || null,

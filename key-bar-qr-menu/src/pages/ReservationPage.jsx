@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { reservationsAPI } from "../api/reservations";
 import { toast } from "react-toastify";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./ReservationPage.module.css";
 import { tablesAPI } from "../api/tables";
 
@@ -19,6 +20,9 @@ function ReservationPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const navigate = useNavigate();
 
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
+
   useEffect(() => {
     const fetchTables = async () => {
       try {
@@ -30,6 +34,22 @@ function ReservationPage() {
     };
     fetchTables();
   }, []);
+
+  // Обновляем доступность столиков при изменении даты или времени
+  useEffect(() => {
+    const updateTablesAvailability = async () => {
+      if (formData.date && formData.time) {
+        try {
+          const response = await tablesAPI.getAvailabilityForDateTime(formData.date, formData.time);
+          setTables(response.data);
+        } catch (err) {
+          console.error("Не удалось обновить доступность столиков:", err);
+        }
+      }
+    };
+    
+    updateTablesAvailability();
+  }, [formData.date, formData.time]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,35 +140,6 @@ function ReservationPage() {
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formSection}>
               <h3 className={styles.formSectionTitle}>
-                <span className={styles.sectionIcon}>🪑</span>
-                Выбор столика
-              </h3>
-              <div className={styles.formGroup}>
-                <label htmlFor="table_id">Столик *</label>
-                <select
-                  id="table_id"
-                  name="table_id"
-                  value={formData.table_id}
-                  onChange={handleChange}
-                  required
-                  className={styles.formInput}
-                >
-                  <option value="">-- Выберите столик --</option>
-                  {tables.map((table) => (
-                    <option 
-                      key={table.id} 
-                      value={table.id}
-                      disabled={!table.is_available}
-                    >
-                      №{table.name} ({table.seats} мест) - {table.availability_reason}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className={styles.formSection}>
-              <h3 className={styles.formSectionTitle}>
                 <span className={styles.sectionIcon}>📅</span>
                 Дата и время
               </h3>
@@ -183,7 +174,7 @@ function ReservationPage() {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
+              {/* <div className={styles.formGroup}>
                 <label htmlFor="guests">Количество гостей</label>
                 <input
                   type="number"
@@ -195,6 +186,35 @@ function ReservationPage() {
                   max="20"
                   className={styles.formInput}
                 />
+              </div> */}
+            </div>
+
+            <div className={styles.formSection}>
+              <h3 className={styles.formSectionTitle}>
+                <span className={styles.sectionIcon}>🪑</span>
+                Выбор столика
+              </h3>
+              <div className={styles.formGroup}>
+                <label htmlFor="table_id">Столик *</label>
+                <select
+                  id="table_id"
+                  name="table_id"
+                  value={formData.table_id}
+                  onChange={handleChange}
+                  required
+                  className={styles.formInput}
+                >
+                  <option value="">-- Выберите столик --</option>
+                  {tables.map((table) => (
+                    <option 
+                      key={table.id} 
+                      value={table.id}
+                      disabled={!table.is_available}
+                    >
+                      №{table.name} ({table.seats} мест) - {table.availability_reason}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

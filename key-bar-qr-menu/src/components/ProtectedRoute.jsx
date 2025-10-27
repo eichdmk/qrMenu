@@ -1,5 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import styles from './ProtectedRoute.module.css';
 
 /**
@@ -11,7 +12,17 @@ import styles from './ProtectedRoute.module.css';
  * @param {boolean} [props.adminOnly=false] - Если true, маршрут доступен только администраторам.
  */
 function ProtectedRoute({ children, adminOnly = false }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, isAdmin, loading, forceLogout } = useAuth();
+
+  // Проверяем токен при каждом рендере компонента
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token && isAuthenticated) {
+      // Если токен отсутствует, но пользователь считается авторизованным,
+      // принудительно выходим из системы
+      forceLogout();
+    }
+  }, [isAuthenticated, forceLogout]);
 
   // 1. Показываем индикатор загрузки, пока проверяется статус авторизации
   if (loading) {

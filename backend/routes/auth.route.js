@@ -1,9 +1,9 @@
-import express from 'express';
-import { loginAdmin } from '../controllers/auth.controller.js';
+import { loginAdmin, verifyToken } from '../controllers/auth.controller.js';
 
-const router = express.Router();
-
-// Логин администратора
-router.post('/login', loginAdmin);
-
-export default router;
+export default async function authRoutes(fastify, options) {
+  // Логин администратора
+  fastify.post('/login', loginAdmin);
+  
+  // Проверка токена
+  fastify.get('/verify', verifyToken);
+}

@@ -8,7 +8,7 @@ function CartPreview() {
   const { items, total } = useCart();
 
   if (items.length === 0) {
-    return null; // Не показываем, если корзина пуста
+    return null;
   }
 
   const handleClick = () => {

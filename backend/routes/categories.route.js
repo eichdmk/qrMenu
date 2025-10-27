@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   getAllCategories,
   createCategory,
@@ -7,12 +6,10 @@ import {
 } from '../controllers/categories.controller.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
-const router = express.Router();
-
-// CRUD категорий
-router.get('/', getAllCategories);
-router.post('/', authenticateToken, isAdmin, createCategory);
-router.put('/:id', authenticateToken, isAdmin, updateCategory);
-router.delete('/:id', authenticateToken, isAdmin, deleteCategory);
-
-export default router;
+export default async function categoriesRoutes(fastify, options) {
+  // CRUD категорий
+  fastify.get('/', getAllCategories);
+  fastify.post('/', { preHandler: [authenticateToken, isAdmin] }, createCategory);
+  fastify.put('/:id', { preHandler: [authenticateToken, isAdmin] }, updateCategory);
+  fastify.delete('/:id', { preHandler: [authenticateToken, isAdmin] }, deleteCategory);
+}

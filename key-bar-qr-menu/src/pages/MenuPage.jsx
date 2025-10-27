@@ -1,23 +1,23 @@
-import { useState, useEffect } from "react";
-import { useMenu } from "../hooks/useMenu";
+import { useMenuPaginated } from "../hooks/useMenuPaginated";
 import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import CartPreview from "../components/Cart/CartPreview";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./MenuPage.module.css";
 
 function MenuPage() {
-  const { menuItems, categories, loading } = useMenu();
-  const [activeCategory, setActiveCategory] = useState("all");
+  const { 
+    menuItems, 
+    categories, 
+    loading, 
+    loadingMore, 
+    activeCategory,
+    setActiveCategory,
+    observerTarget
+  } = useMenuPaginated(20);
 
-  useEffect(() => {
-    // Прокручиваем в самый верх страницы при смене категории
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [activeCategory]);
-
-  const filteredItems =
-    activeCategory === "all"
-      ? menuItems
-      : menuItems.filter((item) => item.category_id === activeCategory);
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
 
   if (loading) {
     return (
@@ -48,15 +48,25 @@ function MenuPage() {
         />
 
         <div className={styles.menuGrid}>
-          {filteredItems.map((item, index) => (
+          {menuItems.map((item, index) => (
             <div 
               key={item.id} 
               className={styles.menuItemWrapper}
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ animationDelay: `${Math.min(index, 10) * 0.1}s` }}
             >
               <MenuItemCard item={item} />
             </div>
           ))}
+          
+          {/* Sentinel element for infinite scroll */}
+          <div ref={observerTarget} style={{ height: '20px' }}></div>
+          
+          {loadingMore && (
+            <div className={styles.loadingMore}>
+              <div className={styles.spinner}></div>
+              <p>Загрузка...</p>
+            </div>
+          )}
         </div>
       </div>
 

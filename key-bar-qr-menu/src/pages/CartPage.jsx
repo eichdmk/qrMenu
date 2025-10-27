@@ -2,14 +2,22 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { formatPrice } from "../utils/format";
 import { getImageUrl } from "../api/constants";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./CartPage.module.css";
 
 function CartPage() {
   const navigate = useNavigate();
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
 
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
+
   const handleRemoveItem = (itemId) => {
     removeItem(itemId);
+  };
+
+  const handleClearCart = () => {
+    clearCart();
   };
 
   if (items.length === 0) {
@@ -66,6 +74,7 @@ function CartPage() {
                     <img 
                       src={getImageUrl(item.image_url)} 
                       alt={item.name}
+                      loading="lazy"
                       onError={(e) => {
                         e.target.src = "/placeholder-food.jpg";
                       }}
@@ -121,7 +130,7 @@ function CartPage() {
 
             <button 
               className={styles.clearButton}
-              onClick={clearCart}
+              onClick={handleClearCart}
             >
               <span className={styles.buttonIcon}>🧹</span>
               Очистить корзину

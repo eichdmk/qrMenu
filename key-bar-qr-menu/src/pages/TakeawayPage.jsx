@@ -1,35 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMenu } from "../hooks/useMenu";
-import { useOrders } from "../hooks/useOrders";
+import { useMenuPaginated } from "../hooks/useMenuPaginated";
+import { createOrder } from "../api/orders";
 import { useCart } from "../contexts/CartContext";
 import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import CartPreview from "../components/Cart/CartPreview";
-import { formatPrice } from "../utils/format";
 import { toast } from "react-toastify";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./TakeawayPage.module.css";
 
 function TakeawayPage() {
-  const { menuItems, categories } = useMenu();
-  const { createOrder } = useOrders();
+  const { 
+    menuItems, 
+    categories, 
+    loadingMore,
+    activeCategory,
+    setActiveCategory,
+    observerTarget
+  } = useMenuPaginated(20);
   const { items, clearCart } = useCart();
   const navigate = useNavigate();
 
-  const [activeCategory, setActiveCategory] = useState("all");
   const [customerInfo, setCustomerInfo] = useState({ name: "", phone: "" });
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    // Прокручиваем в самый верх страницы при смене категории
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [activeCategory]);
-
-  const filteredItems =
-    activeCategory === "all"
-      ? menuItems
-      : menuItems.filter((item) => item.category_id === activeCategory);
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
 
   const handleCustomerInfoChange = (e) => {
     const { name, value } = e.target;
@@ -123,15 +121,25 @@ function TakeawayPage() {
         />
 
         <div className={styles.menuGrid}>
-          {filteredItems.map((item, index) => (
+          {menuItems.map((item, index) => (
             <div 
               key={item.id}
               className={styles.menuItemWrapper}
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ animationDelay: `${Math.min(index, 10) * 0.1}s` }}
             >
               <MenuItemCard item={item} />
             </div>
           ))}
+          
+          {/* Sentinel element for infinite scroll */}
+          <div ref={observerTarget} style={{ height: '20px' }}></div>
+          
+          {loadingMore && (
+            <div className={styles.loadingMore}>
+              <div className={styles.spinner}></div>
+              <p>Загрузка...</p>
+            </div>
+          )}
         </div>
       </div>
 

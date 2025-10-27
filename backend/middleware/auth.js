@@ -3,22 +3,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Middleware для проверки JWT токена
-export const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+export const authenticateToken = async (request, reply) => {
+  try {
+    const authHeader = request.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.status(401).json({ message: 'Нет токена, доступ запрещен' });
+    if (!token) {
+      return reply.status(401).send({ message: 'Нет токена, доступ запрещен' });
+    }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Неверный токен' });
-    req.user = user; 
-    next();
-  });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    request.user = decoded;
+  } catch (err) {
+    return reply.status(403).send({ message: 'Неверный токен' });
+  }
 };
 
-export const isAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Нет прав администратора' });
+export const isAdmin = async (request, reply) => {
+  if (request.user.role !== 'admin') {
+    return reply.status(403).send({ message: 'Нет прав администратора' });
   }
-  next();
 };

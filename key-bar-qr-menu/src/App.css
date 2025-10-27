@@ -313,9 +313,30 @@ textarea::placeholder {
    ======================================== */
 
 .Toastify__toast {
-  font-family: inherit;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  font-family: inherit !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-size: 14px !important;
+  max-width: 320px !important;
+  min-height: auto !important;
+  padding: 8px 12px !important;
+  width: auto !important;
+  margin: 4px !important;
+}
+
+.Toastify__toast-container {
+  padding: 8px !important;
+}
+
+.Toastify__toast-container--top-right,
+.Toastify__toast-container--bottom-right,
+.Toastify__toast-container--top-left,
+.Toastify__toast-container--bottom-left,
+.Toastify__toast-container--top-center,
+.Toastify__toast-container--bottom-center,
+.Toastify__toast-container--center {
+  max-width: 340px !important;
+  width: auto !important;
 }
 
 .Toastify__toast--success {
@@ -331,12 +352,21 @@ textarea::placeholder {
 }
 
 .Toastify__toast-body {
-  font-weight: 500;
-  padding: 8px;
+  font-weight: 500 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
 }
 
 .Toastify__progress-bar {
   background: rgba(255, 255, 255, 0.7);
+}
+
+.Toastify__close-button {
+  width: 16px !important;
+  height: 16px !important;
+  opacity: 0.8 !important;
 }
 
 /* ========================================
@@ -357,6 +387,31 @@ textarea::placeholder {
   .container {
     padding: 0 var(--spacing);
   }
+
+  /* Toast уведомления для мобильных */
+  .Toastify__toast {
+    max-width: 300px !important;
+    width: auto !important;
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+    min-height: auto !important;
+    margin: 4px !important;
+  }
+
+  .Toastify__toast-container--top-right,
+  .Toastify__toast-container--bottom-right,
+  .Toastify__toast-container--top-left,
+  .Toastify__toast-container--bottom-left,
+  .Toastify__toast-container--top-center,
+  .Toastify__toast-container--bottom-center,
+  .Toastify__toast-container--center {
+    max-width: 320px !important;
+    width: auto !important;
+  }
+
+  .Toastify__toast-body {
+    font-size: 13px !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -366,6 +421,30 @@ textarea::placeholder {
   
   .container {
     padding: 0 var(--spacing-sm);
+  }
+
+  /* Toast уведомления для маленьких экранов */
+  .Toastify__toast {
+    max-width: 260px !important;
+    width: auto !important;
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    min-height: auto !important;
+  }
+
+  .Toastify__toast-container--top-right,
+  .Toastify__toast-container--bottom-right,
+  .Toastify__toast-container--top-left,
+  .Toastify__toast-container--bottom-left,
+  .Toastify__toast-container--top-center,
+  .Toastify__toast-container--bottom-center,
+  .Toastify__toast-container--center {
+    max-width: 280px !important;
+    width: auto !important;
+  }
+
+  .Toastify__toast-body {
+    font-size: 12px !important;
   }
 }
 

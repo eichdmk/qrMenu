@@ -1,4 +1,3 @@
-import express from 'express';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 import {
   getAllReservations,
@@ -9,24 +8,22 @@ import {
   deleteReservation
 } from '../controllers/reservations.controller.js';
 
-const router = express.Router();
+export default async function reservationsRoutes(fastify, options) {
+  // Получить все брони — админ
+  fastify.get('/', { preHandler: [authenticateToken, isAdmin] }, getAllReservations);
 
-// Получить все брони — админ
-router.get('/', authenticateToken, isAdmin, getAllReservations);
+  // Получить бронь по ID — админ
+  fastify.get('/:id', { preHandler: [authenticateToken, isAdmin] }, getReservationById);
 
-// Получить бронь по ID — админ
-router.get('/:id', authenticateToken, isAdmin, getReservationById);
+  // Создать бронь — клиент (публично)
+  fastify.post('/', createReservation);
 
-// Создать бронь — клиент (публично)
-router.post('/', createReservation);
+  // Обновить бронь — админ
+  fastify.put('/:id', { preHandler: [authenticateToken, isAdmin] }, updateReservation);
 
-// Обновить бронь — админ
-router.put('/:id', authenticateToken, isAdmin, updateReservation);
+  // Обновить только статус брони — админ
+  fastify.patch('/:id/status', { preHandler: [authenticateToken, isAdmin] }, updateReservationStatus);
 
-// Обновить только статус брони — админ
-router.patch('/:id/status', authenticateToken, isAdmin, updateReservationStatus);
-
-// Удалить бронь — админ
-router.delete('/:id', authenticateToken, isAdmin, deleteReservation);
-
-export default router;
+  // Удалить бронь — админ
+  fastify.delete('/:id', { preHandler: [authenticateToken, isAdmin] }, deleteReservation);
+}

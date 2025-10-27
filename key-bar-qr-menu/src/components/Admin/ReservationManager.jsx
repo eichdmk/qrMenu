@@ -1,4 +1,4 @@
-import { useMenu } from "../../hooks/useMenu"; // Re-using for fetching, or create a new hook
+import { useMenu } from "../../hooks/useMenu";
 import { reservationsAPI } from "../../api/reservations";
 import { getStatusText, getStatusColor, formatDate, formatTime } from "../../utils/format";
 import { toast } from "react-toastify";
@@ -24,6 +24,16 @@ function ReservationManager() {
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await reservationsAPI.updateStatus(id, { status: newStatus });
+      toast.success("Статус бронирования обновлён");
+      fetchReservations()
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Ошибка при обновлении статуса");
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm("Удалить это бронирование? Это действие нельзя отменить.")) return;
 
@@ -42,15 +52,14 @@ function ReservationManager() {
 
   return (
     <div className={styles.manager}>
-      <h3>Управление бронированиями</h3>
       {reservations.length > 0 ? (
         <div className={styles.reservationsList}>
           {reservations.map((res) => (
             <div key={res.id} className={styles.reservationCard}>
               <div className={styles.reservationHeader}>
                 <h4>Бронь #{res.id}</h4>
-                <span 
-                  className={styles.status} 
+                <span
+                  className={styles.status}
                   style={{ backgroundColor: getStatusColor(res.status, 'reservation') }}
                 >
                   {getStatusText(res.status, 'reservation')}
@@ -65,8 +74,8 @@ function ReservationManager() {
                 <p><strong>Статус:</strong> {res.status}</p>
               </div>
               <div className={styles.reservationActions}>
-                <select 
-                  value={res.status} 
+                <select
+                  value={res.status}
                   onChange={(e) => handleStatusChange(res.id, e.target.value)}
                   className={styles.statusSelect}
                 >

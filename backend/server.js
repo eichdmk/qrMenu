@@ -1,10 +1,8 @@
-import express from 'express';
-import cors from 'cors';
+import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createDefaultAdmin } from './utils/initAdmin.js';
-
 // Роуты
 import menuRoutes from './routes/menu.route.js';
 import ordersRoutes from './routes/orders.route.js';
@@ -16,37 +14,62 @@ import authRoutes from './routes/auth.route.js';
 
 dotenv.config();
 
-const app = express();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-app.use('/api/menu', menuRoutes);
-app.use('/api/orders', ordersRoutes);
-app.use('/api/tables', tablesRoutes);
-app.use('/api/reservations', reservationsRoutes);
-app.use('/api/upload', uploadRoutes);
-app.use('/api/auth', authRoutes); 
-app.use('/api/categories', categoriesRoutes);
-
-app.get('/', (req, res) => {
-  res.send('QR-Меню сервер работает!');
+// Создаем экземпляр Fastify
+const fastify = Fastify({
+  logger: true
 });
 
+// Регистрируем плагины
+await fastify.register(import('@fastify/cors'), {
+  origin: true
+});
+
+await fastify.register(import('@fastify/static'), {
+  root: path.join(__dirname, 'uploads'),
+  prefix: '/uploads/'
+});
+
+await fastify.register(import('@fastify/multipart'), {
+  limits: {
+    fileSize: 10 * 1024 * 1024 
+  }
+});
+
+// Регистрируем роуты
+await fastify.register(authRoutes, { prefix: '/api/auth' });
+await fastify.register(menuRoutes, { prefix: '/api/menu' });
+await fastify.register(ordersRoutes, { prefix: '/api/orders' });
+await fastify.register(tablesRoutes, { prefix: '/api/tables' });
+await fastify.register(reservationsRoutes, { prefix: '/api/reservations' });
+await fastify.register(uploadRoutes, { prefix: '/api/upload' });
+await fastify.register(categoriesRoutes, { prefix: '/api/categories' });
+
+// Главная страница
+fastify.get('/', async (request, reply) => {
+  return { message: 'QR-Меню сервер работает!' };
+});
+
+// Обработчик 404
+fastify.setNotFoundHandler((request, reply) => {
+  reply.status(404).send({ message: 'Эндпоинт не найден' });
+});
+
+// Создаем админа по умолчанию
 createDefaultAdmin();
 
+// Запускаем сервер
+const start = async () => {
+  try {
+    const PORT = process.env.PORT || 3000;
+    await fastify.listen({ port: PORT, host: '0.0.0.0' });
+    console.log(`Server running on port ${PORT}`);
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+};
 
-app.use((req, res) => {
-  res.status(404).json({ message: 'Эндпоинт не найден' });
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+start();

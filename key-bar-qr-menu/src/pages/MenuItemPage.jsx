@@ -5,6 +5,7 @@ import { useCart } from "../contexts/CartContext";
 import { formatPrice } from "../utils/format";
 import { getImageUrl } from "../api/constants";
 import { toast } from "react-toastify";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./MenuItemPage.module.css";
 
 function MenuItemPage() {
@@ -14,6 +15,9 @@ function MenuItemPage() {
   const [item, setItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
 
   useEffect(() => {
     const fetchItem = async () => {

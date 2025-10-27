@@ -1,0 +1,701 @@
+/* 🛒 QR КОРЗИНА — МОБИЛЬНАЯ ВЕРСИЯ (улучшенная) */
+
+.qrCart {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 16px); /* Поддержка iPhone notch */
+  left: env(safe-area-inset-left, 16px);
+  right: env(safe-area-inset-right, 16px);
+  z-index: 1000;
+  max-width: 400px;
+  width: calc(100% - 32px); /* 16px отступы слева и справа */
+  margin: 0 auto;
+  animation: slideInUp 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform, opacity; /* Оптимизация анимации */
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === Компактный вид === */
+.compactView {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  border-radius: 24px; /* Менее агрессивный радиус */
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(44, 24, 16, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Safari */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 64px; /* Минимальная высота для touch */
+}
+
+.compactView:hover,
+.compactView:focus {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    0 12px 32px rgba(44, 24, 16, 0.35);
+}
+
+/* === Иконка и бейдж === */
+.iconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4d4d; /* Более насыщенный красный */
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 12px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(255, 77, 77, 0.4);
+  animation: pulse 2s infinite;
+  line-height: 1;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+}
+
+/* === Текстовая информация === */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0; /* Для корректного overflow */
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.total {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+}
+
+.arrow {
+  font-size: 1.4rem;
+  color: white;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+/* === Развернутый вид === */
+.expandedView {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 20px;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 12px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-top: 12px;
+  animation: expandDown 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  overflow: hidden;
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+/* === Шапка === */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #777;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.closeButton:hover,
+.closeButton:focus {
+  background: rgba(0, 0, 0, 0.06);
+  color: #333;
+  outline: none;
+}
+
+/* === Список товаров === */
+.items {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 0 20px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+.items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.items::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.items::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 3px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.quantityButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background-color: #8b4513;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  /* Минимальный размер для touch */
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.quantityButton:hover:not(:disabled),
+.quantityButton:focus:not(:disabled) {
+  background-color: #654321;
+  transform: scale(1.08);
+  outline: none;
+}
+
+.quantityButton:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.itemQuantity {
+  font-size: 0.95rem;
+  color: #555;
+  min-width: 24px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.itemPrice {
+  font-weight: 600;
+  color: #8b4513;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.removeButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.removeButton:hover,
+.removeButton:focus {
+  background-color: #e63939;
+  transform: scale(1.1);
+  outline: none;
+}
+
+/* === Поле комментария === */
+.commentSection {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(139, 69, 19, 0.02);
+}
+
+.commentLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.commentIcon {
+  font-size: 1rem;
+}
+
+.commentInput {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: white;
+}
+
+.commentInput:focus {
+  outline: none;
+  border-color: #8b4513;
+  box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+}
+
+.commentInput::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.commentCounter {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* === Итог и кнопки === */
+.totalSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 2px solid rgba(139, 69, 19, 0.15);
+  background: rgba(139, 69, 19, 0.03);
+  font-weight: 600;
+  color: #333;
+}
+
+.totalLabel {
+  font-size: 1rem;
+  color: #666;
+}
+
+.totalPrice {
+  color: #8b4513;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px 20px;
+  flex-wrap: wrap;
+}
+
+.clearButton,
+.checkoutButton {
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-height: 48px; /* Минимальная высота для touch (WCAG) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.clearButton {
+  background-color: #f8f8f8;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+.clearButton:hover,
+.clearButton:focus {
+  background-color: #ffe6e6;
+  color: #d32f2f;
+  border-color: #ff9999;
+  outline: none;
+}
+
+.checkoutButton {
+  background-color: #8b4513;
+  color: white;
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.25);
+}
+
+.checkoutButton:hover:not(:disabled),
+.checkoutButton:focus:not(:disabled) {
+  background-color: #654321;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.35);
+  outline: none;
+}
+
+.checkoutButton:disabled {
+  background-color: #bdbdbd;
+  color: #757575;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* === Адаптивность === */
+@media (max-width: 768px) {
+  .qrCart {
+    bottom: env(safe-area-inset-bottom, 12px);
+    left: env(safe-area-inset-left, 12px);
+    right: env(safe-area-inset-right, 12px);
+    width: calc(100% - 24px);
+  }
+
+  .compactView {
+    padding: 14px 16px;
+    min-height: 60px;
+  }
+
+  .iconWrapper {
+    width: 44px;
+    height: 44px;
+  }
+
+  .total {
+    font-size: 1.15rem;
+  }
+
+  .expandedView {
+    border-radius: 18px;
+  }
+
+  .items {
+    max-height: 240px;
+    padding: 0 16px 8px;
+  }
+
+  .item {
+    padding: 12px 0;
+  }
+
+  .quantityButton {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  .removeButton {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+
+  .totalPrice {
+    font-size: 1.25rem;
+  }
+
+  .actions {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .clearButton,
+  .checkoutButton {
+    padding: 11px;
+    font-size: 0.95rem;
+    min-height: 46px;
+  }
+
+  /* Мобильные стили для комментария */
+  .commentSection {
+    padding: 14px 16px;
+  }
+
+  .commentLabel {
+    font-size: 0.85rem;
+  }
+
+  .commentInput {
+    padding: 10px;
+    font-size: 0.85rem;
+    min-height: 70px;
+  }
+
+  .commentCounter {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .qrCart {
+    bottom: env(safe-area-inset-bottom, 10px);
+    left: env(safe-area-inset-left, 10px);
+    right: env(safe-area-inset-right, 10px);
+    width: calc(100% - 20px);
+  }
+
+  .compactView {
+    padding: 12px 14px;
+    min-height: 56px;
+    gap: 12px;
+  }
+
+  .iconWrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon {
+    font-size: 1.3rem;
+  }
+
+  .label {
+    font-size: 0.75rem;
+  }
+
+  .total {
+    font-size: 1.1rem;
+  }
+
+  .arrow {
+    font-size: 1.25rem;
+  }
+
+  .expandedView {
+    border-radius: 16px;
+  }
+
+  .header {
+    padding: 12px 16px 10px;
+  }
+
+  .header h3 {
+    font-size: 1.05rem;
+  }
+
+  .items {
+    max-height: 200px;
+    padding: 0 14px 6px;
+  }
+
+  .item {
+    padding: 10px 0;
+  }
+
+  .itemName {
+    font-size: 0.9rem;
+  }
+
+  .quantityButton {
+    width: 28px;
+    height: 28px;
+    font-size: 0.95rem;
+  }
+
+  .removeButton {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .totalSection {
+    padding: 14px 16px;
+  }
+
+  .totalPrice {
+    font-size: 1.2rem;
+  }
+
+  .actions {
+    padding: 14px 16px 16px;
+    gap: 8px;
+  }
+
+  .clearButton,
+  .checkoutButton {
+    padding: 10px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 10px;
+  }
+
+  /* Стили для комментария на маленьких экранах */
+  .commentSection {
+    padding: 12px 14px;
+  }
+
+  .commentLabel {
+    font-size: 0.8rem;
+  }
+
+  .commentInput {
+    padding: 8px;
+    font-size: 0.8rem;
+    min-height: 60px;
+  }
+
+  .commentCounter {
+    font-size: 0.65rem;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 360px) {
+  .compactView {
+    padding: 10px 12px;
+  }
+
+  .info {
+    gap: 2px;
+  }
+
+  .label {
+    font-size: 0.7rem;
+  }
+
+  .total {
+    font-size: 1rem;
+  }
+
+  .items {
+    max-height: 180px;
+  }
+
+  .itemName {
+    font-size: 0.85rem;
+  }
+}

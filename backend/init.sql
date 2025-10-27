@@ -142,8 +142,15 @@ INSERT INTO tables (name, seats) VALUES
 ('Столик 4', 4),
 ('Столик 5', 2);
 
--- 10. Индексы
+-- 10. Индексы для оптимизации производительности
 CREATE INDEX idx_orders_table_id ON orders(table_id);
 CREATE INDEX idx_orders_reservation_id ON orders(reservation_id);
+CREATE INDEX idx_orders_created_at ON orders(created_at DESC);
+CREATE INDEX idx_orders_status ON orders(status);
+CREATE INDEX idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX idx_order_items_menu_item_id ON order_items(menu_item_id);
 CREATE INDEX idx_reservations_table_time ON reservations(table_id, start_at, end_at);
+CREATE INDEX idx_reservations_status ON reservations(status);
 CREATE INDEX idx_menu_items_category ON menu_items(category_id);
+CREATE INDEX idx_menu_items_available ON menu_items(available);
+CREATE INDEX idx_tables_token ON tables(token);

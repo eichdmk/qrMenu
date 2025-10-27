@@ -1,24 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useOrders } from "../hooks/useOrders";
+import { createOrder } from "../api/orders";
 import { useCart } from "../contexts/CartContext";
 import { formatPrice } from "../utils/format";
 import { getImageUrl } from "../api/constants";
 import { toast } from "react-toastify";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./TakeawayCheckoutPage.module.css";
 
 function TakeawayCheckoutPage() {
-  const { createOrder } = useOrders();
   const { items, clearCart, total, removeItem, updateQuantity } = useCart();
   const navigate = useNavigate();
 
   const [customerInfo, setCustomerInfo] = useState({ name: "", phone: "" });
+  const [comment, setComment] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
 
   const handleCustomerInfoChange = (e) => {
     const { name, value } = e.target;
     setCustomerInfo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
   };
 
   const handleCheckout = async () => {
@@ -37,10 +45,12 @@ function TakeawayCheckoutPage() {
         orderType: "takeaway",
         customerName: customerInfo.name,
         customerPhone: customerInfo.phone,
+        comment: comment,
         items: items.map(item => ({
           id: item.id,
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
+          item_comment: item.item_comment || null
         }))
       };
 
@@ -188,6 +198,24 @@ function TakeawayCheckoutPage() {
                 className={styles.formInput}
                 required
               />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>
+                <span className={styles.labelIcon}>💬</span>
+                Комментарий к заказу (необязательно)
+              </label>
+              <textarea
+                name="comment"
+                value={comment}
+                onChange={handleCommentChange}
+                placeholder="Например: Позвоните за 10 минут до готовности..."
+                className={styles.formTextarea}
+                rows={3}
+                maxLength={500}
+              />
+              <div className={styles.charCount}>
+                {comment.length}/500
+              </div>
             </div>
 
             <button 

@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
+import { MenuIcon, CalendarIcon } from "../components/Icons";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 import styles from "./HomePage.module.css";
 
 function HomePage() {
+  // Скроллим наверх при загрузке страницы
+  useScrollToTop();
   return (
     <div className={styles.homePage}>
       {/* Hero Section */}
@@ -9,7 +13,6 @@ function HomePage() {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.heroTitle}>
-              <span className={styles.gradientText}>Добро пожаловать</span>
               <br />
               в <span className={styles.brandName}>Key Bar</span>
             </h1>
@@ -18,11 +21,15 @@ function HomePage() {
             </p>
             <div className={styles.heroButtons}>
               <Link to="/menu" className={styles.primaryButton}>
-                <span className={styles.buttonIcon}>🍽️</span>
+                <span className={styles.buttonIcon}>
+                  <MenuIcon size={20} />
+                </span>
                 Посмотреть меню
               </Link>
               <Link to="/reservation" className={styles.secondaryButton}>
-                <span className={styles.buttonIcon}>📅</span>
+                <span className={styles.buttonIcon}>
+                  <CalendarIcon size={20} />
+                </span>
                 Забронировать столик
               </Link>
             </div>

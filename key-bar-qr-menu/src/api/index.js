@@ -1,6 +1,7 @@
 import axios from "axios";
+import { handleTokenExpiration, isTokenExpired } from "../utils/authUtils";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = "http://0.0.0.0:3000/api";
 
 // Создаем экземпляр Axios с базовыми настройками
 const api = axios.create({
@@ -25,6 +26,14 @@ api.interceptors.request.use(
   }
 );
 
+// Endpoints, которые не должны вызывать редирект на login
+const PUBLIC_ENDPOINTS = ['/menu', '/categories'];
+
+// Проверяем, является ли endpoint публичным
+function isPublicEndpoint(url) {
+  return PUBLIC_ENDPOINTS.some(endpoint => url.includes(endpoint));
+}
+
 // --- INTERCEPTOR для обработки ответов (например, ошибка 401) ---
 api.interceptors.response.use(
   (response) => {
@@ -33,11 +42,15 @@ api.interceptors.response.use(
   },
   (error) => {
     // Любые коды статуса, которые выходят за пределы диапазона 2xx, вызывают эту функцию
-    if (error.response?.status === 401) {
-      // Если токен просрочен или невалиден, удаляем его и перенаправляем на страницу входа
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/login";
+    if (isTokenExpired(error)) {
+      const url = error.config?.url || '';
+      
+      // Не перенаправляем на /login если:
+      // 1. Это публичный endpoint (menu, categories)
+      // 2. Или это проверка токена (verify)
+      if (!isPublicEndpoint(url) && !url.includes('/auth/verify')) {
+        handleTokenExpiration();
+      }
     }
     return Promise.reject(error);
   }

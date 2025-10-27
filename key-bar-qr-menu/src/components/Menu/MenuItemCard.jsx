@@ -1,21 +1,22 @@
+import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
 import { formatPrice } from "../../utils/format";
 import { getImageUrl } from "../../api/constants";
 import styles from "./MenuItemCard.module.css";
 
-function MenuItemCard({ item }) {
+const MenuItemCard = memo(({ item }) => {
   const navigate = useNavigate();
   const { addItem } = useCart();
 
-  const handleCardClick = () => {
+  const handleCardClick = useCallback(() => {
     navigate(`/menu/${item.id}`);
-  };
+  }, [navigate, item.id]);
 
-  const handleAddClick = (e) => {
+  const handleAddClick = useCallback((e) => {
     e.stopPropagation();
     addItem(item);
-  };
+  }, [addItem, item]);
 
   return (
     <div className={`${styles.card} ${!item.available ? styles.unavailable : ''}`} onClick={handleCardClick}>
@@ -23,6 +24,7 @@ function MenuItemCard({ item }) {
         <img 
           src={getImageUrl(item.image_url)} 
           alt={item.name}
+          loading="lazy"
           onError={(e) => {
             e.target.src = "/placeholder-food.jpg";
           }}
@@ -62,6 +64,8 @@ function MenuItemCard({ item }) {
       </div>
     </div>
   );
-}
+});
+
+MenuItemCard.displayName = 'MenuItemCard';
 
 export default MenuItemCard;

@@ -38,55 +38,24 @@ function Navbar() {
         <ul className={`${styles.navLinks} ${isMenuOpen ? styles.active : ""}`}>
           <li>
             <Link to="/" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-              <span className={styles.navIcon}>🏠</span>
               <span>Главная</span>
             </Link>
           </li>
           <li>
             <Link to="/menu" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-              <span className={styles.navIcon}>🍽️</span>
               <span>Меню</span>
             </Link>
           </li>
           <li>
             <Link to="/reservation" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-              <span className={styles.navIcon}>📅</span>
               <span>Бронирование</span>
             </Link>
           </li>
           <li>
             <Link to="/takeaway" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-              <span className={styles.navIcon}>🥡</span>
               <span>С собой</span>
             </Link>
           </li>
-          
-
-          {isAuthenticated ? (
-            <>
-              {user?.role === "admin" && (
-                <li>
-                  <Link to="/admin" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-                    <span className={styles.navIcon}>⚙️</span>
-                    <span>Админ</span>
-                  </Link>
-                </li>
-              )}
-              <li>
-                <button onClick={handleLogout} className={styles.logoutBtn}>
-                  <span className={styles.navIcon}>🚪</span>
-                  <span>Выйти</span>
-                </button>
-              </li>
-            </>
-          ) : (
-            <li>
-              <Link to="/login" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-                <span className={styles.navIcon}>🔑</span>
-                <span>Вход</span>
-              </Link>
-            </li>
-          )}
         </ul>
       </div>
     </nav>

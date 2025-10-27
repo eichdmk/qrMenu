@@ -7,26 +7,39 @@ const __dirname = path.dirname(__filename);
 
 const uploadDir = path.join(__dirname, '../uploads');
 
-export const uploadImage = (req, res) => {
-  if (!req.file) return res.status(400).json({ message: 'Файл не загружен' });
+export const uploadImage = async (request, reply) => {
+  try {
+    const data = await request.file();
+    if (!data) return reply.status(400).send({ message: 'Файл не загружен' });
 
-  res.status(201).json({ image_url: `/uploads/${req.file.filename}` });
+    const filename = `${Date.now()}-${data.filename}`;
+    const filepath = path.join(uploadDir, filename);
+    
+    // Преобразуем файл в buffer и записываем
+    const buffer = await data.toBuffer();
+    await fs.promises.writeFile(filepath, buffer);
+
+    return reply.status(201).send({ image_url: `/uploads/${filename}` });
+  } catch (err) {
+    console.error(err);
+    return reply.status(500).send({ message: 'Ошибка при загрузке файла' });
+  }
 };
 
 // Удаление изображения
-export const deleteImage = (req, res) => {
+export const deleteImage = async (request, reply) => {
   try {
-    const { filename } = req.params;
+    const { filename } = request.params;
     const filePath = path.join(uploadDir, filename);
 
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: 'Файл не найден' });
+      return reply.status(404).send({ message: 'Файл не найден' });
     }
 
     fs.unlinkSync(filePath);
-    res.json({ message: 'Файл успешно удалён' });
+    return reply.send({ message: 'Файл успешно удалён' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Ошибка при удалении файла' });
+    return reply.status(500).send({ message: 'Ошибка при удалении файла' });
   }
 };

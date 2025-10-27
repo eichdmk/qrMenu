@@ -26,7 +26,7 @@ function MenuManager() {
       name: item.name,
       description: item.description,
       price: item.price,
-      categoryId: item.category_id,
+      categoryId: item.category_id ? String(item.category_id) : "",
       image_url: item.image_url,
       available: item.available,
     });
@@ -50,7 +50,14 @@ function MenuManager() {
     setLoading(true);
 
     try {
-      let data = { ...formData };
+      // Преобразуем categoryId в category_id для API
+      let data = {
+        ...formData,
+        category_id: formData.categoryId ? parseInt(formData.categoryId, 10) : null,
+      };
+      
+      // Удаляем categoryId, чтобы не отправлять его
+      delete data.categoryId;
 
       if (imageFile) {
         const uploadResult = await uploadAPI.uploadImage(imageFile);
@@ -80,7 +87,9 @@ function MenuManager() {
       await deleteMenuItem(id);
       toast.success("Блюдо удалено");
     } catch (error) {
-      toast.error("Ошибка при удалении");
+      // Показываем конкретное сообщение об ошибке с сервера
+      const errorMessage = error.response?.data?.message || error.message || "Ошибка при удалении";
+      toast.error(errorMessage);
     }
   };
 

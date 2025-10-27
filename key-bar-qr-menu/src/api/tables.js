@@ -4,6 +4,7 @@ import api from './index';
 export const tablesAPI = {
   getAll: () => api.get("/tables"),
   getWithAvailability: () => api.get("/tables/availability"),
+  getAvailabilityForDateTime: (date, time) => api.get(`/tables/availability/date-time?date=${date}&time=${time}`),
   getById: (id) => api.get(`/tables/id/${id}`),
   getByToken: (token) => api.get(`/tables/${token}`),
   create: (data) => api.post("/tables", data),

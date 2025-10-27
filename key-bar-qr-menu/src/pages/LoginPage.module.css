@@ -1,10 +1,24 @@
+/* Обновлённые, более приятные цвета */
+:root {
+  --primary: #ff8c00;       /* насыщенный, но не агрессивный оранжевый */
+  --primary-dark: #e67300;  /* чуть темнее для hover */
+  --primary-light: #ffd599; /* мягкий светлый акцент */
+  --bg: #ffffff;
+  --card-bg: #ffffff;
+  --text: #2d2d2d;
+  --text-light: #666666;
+  --border: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --error: #e53e3e;
+}
+
 .container {
   min-height: calc(100vh - 70px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  background: linear-gradient(135deg, rgba(255, 153, 0, 0.05), rgba(255, 153, 0, 0.1));
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.04), rgba(255, 140, 0, 0.08));
 }
 
 .formWrapper {
@@ -12,8 +26,9 @@
   max-width: 450px;
   background-color: var(--card-bg);
   padding: 50px 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px var(--shadow);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
 }
 
 .header {
@@ -25,10 +40,23 @@
   font-size: 2rem;
   margin-bottom: 10px;
   color: var(--text);
+  font-weight: 700;
 }
 
 .header p {
   color: var(--text-light);
+  font-size: 1.05rem;
+}
+
+.error {
+  background-color: #fff5f5;
+  color: var(--error);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #fed7d7;
+  text-align: center;
+  font-weight: 500;
 }
 
 .form {
@@ -47,20 +75,44 @@
   color: var(--text);
 }
 
-.formGroup input {
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordInput {
   width: 100%;
   padding: 14px 16px;
+  padding-right: 50px; /* место для иконки */
   border: 2px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   background-color: var(--bg);
   color: var(--text);
   transition: all 0.3s ease;
 }
 
-.formGroup input:focus {
+.passwordInput:focus {
+  outline: none;
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
   background-color: white;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: color 0.2s ease;
+}
+
+.togglePassword:hover {
+  color: var(--primary);
 }
 
 .submitButton {
@@ -68,41 +120,115 @@
   padding: 16px;
   background-color: var(--primary);
   color: white;
-  border-radius: 8px;
+  border: none;
+  border-radius: 10px;
   font-size: 1.1rem;
   font-weight: 600;
   margin-top: 10px;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.submitButton:hover {
+.submitButton:hover:not(:disabled) {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.3);
 }
 
-.footer {
-  text-align: center;
-  margin-top: 25px;
-  color: var(--text-light);
-}
-
-.footer a {
-  color: var(--primary);
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.footer a:hover {
-  color: var(--primary-dark);
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 768px) {
   .formWrapper {
-    padding: 40px 30px;
+    padding: 40px 24px;
   }
 
   .header h1 {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
   }
+
+  .passwordInput {
+    padding-right: 48px;
+  }
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Обычный input (логин) */
+.formGroup input:not(.passwordInput) {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+
+.formGroup input:not(.passwordInput):focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+  background-color: white;
+}
+
+/* Обёртка пароля — должна быть такой же ширины */
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.passwordInput {
+  width: 100%;
+  padding: 14px 16px;
+  padding-right: 50px; /* место для иконки */
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+  box-sizing: border-box; /* ⚠️ КРИТИЧЕСКИ ВАЖНО */
+  transition: all 0.3s ease;
+}
+
+.passwordInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+  background-color: white;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.togglePassword:hover {
+  color: var(--primary);
 }
