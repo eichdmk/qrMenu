@@ -1,7 +1,7 @@
 import axios from "axios";
 import { handleTokenExpiration, isTokenExpired } from "../utils/authUtils";
 
-const API_URL = "http://0.0.0.0:3000/api";
+const API_URL = "http://89.111.169.156:3000/api";
 
 // Создаем экземпляр Axios с базовыми настройками
 const api = axios.create({
