@@ -18,62 +18,32 @@
 /* ========================================
    ЦВЕТОВАЯ ПАЛИТРА - ЛОФТ КАФЕ
    ======================================== */
-
 :root {
-  /* Основные цвета */
-  --primary: #8b4513;
-  --primary-dark: #654321;
-  --primary-light: #a0522d;
-  --secondary: #cd853f;
-  --accent: #d2691e;
-  --accent-light: #ff8c00;
-  
-  /* Нейтральные */
-  --bg-main: #faf8f5;
-  --bg-secondary: #f5f3ef;
-  --bg-card: #ffffff;
-  --bg-dark: #2c1810;
-  
-  /* Текст */
-  --text-primary: #2c1810;
-  --text-secondary: #5d4e37;
-  --text-muted: #8b7355;
-  --text-light: #a89784;
-  --text-white: #ffffff;
-  
-  /* Границы */
-  --border-color: rgba(139, 69, 19, 0.15);
-  --border-light: rgba(139, 69, 19, 0.1);
-  --border-dark: rgba(139, 69, 19, 0.3);
-  
-  /* Тени */
-  --shadow-sm: 0 1px 2px rgba(44, 24, 16, 0.06);
-  --shadow: 0 2px 4px rgba(44, 24, 16, 0.08);
-  --shadow-md: 0 4px 8px rgba(44, 24, 16, 0.1);
-  --shadow-lg: 0 8px 16px rgba(44, 24, 16, 0.12);
-  --shadow-xl: 0 12px 24px rgba(44, 24, 16, 0.15);
-  
-  /* Градиенты */
-  --gradient-primary: linear-gradient(135deg, #8b4513 0%, #654321 100%);
-  --gradient-secondary: linear-gradient(135deg, #cd853f 0%, #d2691e 100%);
-  --gradient-accent: linear-gradient(135deg, #d2691e 0%, #ff8c00 100%);
-  --gradient-success: linear-gradient(135deg, #2d8659 0%, #3da66d 100%);
-  --gradient-danger: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
-  
-  /* Радиусы */
+  /* Новая светлая палитра */
+  --bg: #fafaf8;
+  --surface: #f6f7f8;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --danger: #dc2626;
+
   --radius-sm: 4px;
-  --radius: 8px;
+  --radius: 10px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
-  
-  /* Переходы */
+
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 2px 4px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 8px 16px rgba(17, 24, 39, 0.10);
+  --shadow-xl: 0 12px 24px rgba(17, 24, 39, 0.12);
+
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Отступы */
+  --transition: 200ms ease;
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing: 16px;
@@ -81,14 +51,38 @@
   --spacing-lg: 32px;
   --spacing-xl: 48px;
   --spacing-2xl: 64px;
-  
-  /* Z-index */
+
   --z-base: 1;
   --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
   --z-modal: 1040;
   --z-toast: 1050;
+
+  /* Совместимость со старыми токенами */
+  --primary: var(--accent);
+  --primary-dark: var(--accent-hover);
+  --primary-light: #13a39a;
+  --secondary: #e2e8f0;
+  --accent-light: #17a2a0;
+  --bg-main: var(--bg);
+  --bg-secondary: var(--surface);
+  --bg-card: #ffffff;
+  --bg-dark: #0b0f14; /* не используем в светлой теме */
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --text-primary: var(--text);
+  --text-secondary: var(--muted);
+  --text-muted: var(--muted);
+  --text-light: #9ca3af;
+  --text-white: #ffffff;
+  --border-color: var(--border);
+  --border-light: var(--border);
+  --border-dark: #cbd5e1;
+  --gradient-primary: linear-gradient(135deg, rgba(15,118,110,0.12), rgba(17,94,89,0.12));
+  --gradient-secondary: linear-gradient(135deg, rgba(246,247,248,1), rgba(230,234,239,1));
+  --gradient-accent: linear-gradient(135deg, rgba(15,118,110,0.16), rgba(17,94,89,0.16));
+  --gradient-success: linear-gradient(135deg, #a3d9a5, #cdeece);
+  --gradient-danger: linear-gradient(135deg, #f4a6a6, #f8c2c2);
 }
 
 /* ========================================
@@ -102,13 +96,20 @@ html {
 }
 
 body {
+  /* background: linear-gradient(135deg, #faf7f2, #f5ebe0); */
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
+    url('/tomato-bruschetta.png') center/cover no-repeat;
+  background-attachment: fixed;
+
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 
                'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   color: var(--text-primary);
-  background: var(--bg-main);
+  /* background: var(--bg-main); */
   min-height: 100vh;
+
 }
 
 /* ========================================
@@ -147,19 +148,52 @@ a:hover {
 /* ========================================
    КНОПКИ
    ======================================== */
-
-button {
+button,
+.btn,
+[type="submit"],
+.cta {
   font-family: inherit;
-  font-size: inherit;
-  border: none;
+  font-size: 1rem;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
   outline: none;
   cursor: pointer;
   transition: all var(--transition);
 }
 
-button:disabled {
+button:hover,
+.btn:hover,
+[type="submit"]:hover,
+.cta:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+button:disabled,
+.btn:disabled,
+[type="submit"]:disabled,
+.cta:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Outline вариант */
+.btn--secondary,
+.btn.outline,
+.cta.outline {
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.btn--secondary:hover,
+.btn.outline:hover,
+.cta.outline:hover {
+  background: rgba(15, 118, 110, 0.08);
 }
 
 /* ========================================

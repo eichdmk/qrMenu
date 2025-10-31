@@ -5,7 +5,7 @@
   top: 80px;
   z-index: 100;
   margin-bottom: 40px;
-  padding: 16px 0;
+  border-radius: 30px;
   background: var(--bg-main);
 }
 
@@ -37,8 +37,8 @@
   background-image: 
     linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
     linear-gradient(to right, rgba(255, 255, 255, 0), white 70%),
-    linear-gradient(to right, rgba(210, 105, 30, 0.1), rgba(210, 105, 30, 0)),
-    linear-gradient(to left, rgba(210, 105, 30, 0.1), rgba(210, 105, 30, 0));
+    linear-gradient(to right, rgba(15, 118, 110, 0.08), rgba(15, 118, 110, 0)),
+    linear-gradient(to left, rgba(15, 118, 110, 0.08), rgba(15, 118, 110, 0));
   background-position: left center, right center, left center, right center;
   background-repeat: no-repeat;
   background-size: 40px 100%, 40px 100%, 10px 100%, 10px 100%;
@@ -89,9 +89,9 @@
 }
 
 .filterButton.active {
-  background: #cd853f;
-  color: white;
-  border-color: #cd853f;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 .buttonIcon {
@@ -106,7 +106,7 @@
 @media (max-width: 768px) {
   .filterContainer {
     top: 70px;
-    padding: 12px 0;
+    /* padding: 12px 0; */
     margin-bottom: 30px;
   }
   
@@ -130,9 +130,9 @@
 }
 
 @media (max-width: 480px) {
-  .filterContainer {
+  /* .filterContainer {
     padding: 10px 0;
-  }
+  } */
   
   .filterWrapper {
     padding: 8px 12px;

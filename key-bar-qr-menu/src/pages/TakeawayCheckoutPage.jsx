@@ -16,8 +16,8 @@ function TakeawayCheckoutPage() {
   const [comment, setComment] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderId, setOrderId] = useState(null);
 
-  // Скроллим наверх при загрузке страницы
   useScrollToTop();
 
   const handleCustomerInfoChange = (e) => {
@@ -54,9 +54,12 @@ function TakeawayCheckoutPage() {
         }))
       };
 
-      await createOrder(orderData);
+      const response = await createOrder(orderData);
+      setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
       clearCart();
+      // Полная очистка sessionStorage после оформления заказа
+      sessionStorage.clear();
       toast.success("Заказ на самовывоз оформлен!");
     } catch (error) {
       toast.error("Ошибка при оформлении заказа");
@@ -69,26 +72,39 @@ function TakeawayCheckoutPage() {
     return (
       <div className={styles.successPage}>
         <div className={styles.successContent}>
-          <div className={styles.successIcon}>✅</div>
-          <h1 className={styles.successTitle}>Заказ оформлен!</h1>
+          <div className={styles.successIcon}>✓</div>
+          <div className={styles.headerSection}>
+            <h1 className={styles.successTitle}>Заказ оформлен!</h1>
+            {orderId && (
+              <div className={styles.orderNumber}>
+                <span className={styles.orderNumberLabel}>№</span>
+                <span className={styles.orderNumberValue}>{orderId}</span>
+              </div>
+            )}
+          </div>
           <p className={styles.successText}>
             Ваш заказ на самовывоз принят. Мы сообщим, когда он будет готов.
           </p>
           <div className={styles.orderInfo}>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>👤 Имя:</span>
-              <span className={styles.infoValue}>{customerInfo.name}</span>
+            <div className={styles.infoCard}>
+              <div className={styles.infoIcon}>👤</div>
+              <div className={styles.infoContent}>
+                <span className={styles.infoLabel}>Имя</span>
+                <span className={styles.infoValue}>{customerInfo.name}</span>
+              </div>
             </div>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>📞 Телефон:</span>
-              <span className={styles.infoValue}>{customerInfo.phone}</span>
+            <div className={styles.infoCard}>
+              <div className={styles.infoIcon}>📞</div>
+              <div className={styles.infoContent}>
+                <span className={styles.infoLabel}>Телефон</span>
+                <span className={styles.infoValue}>{customerInfo.phone}</span>
+              </div>
             </div>
           </div>
           <button 
             className={styles.homeButton} 
             onClick={() => navigate("/")}
           >
-            <span className={styles.buttonIcon}>🏠</span>
             Вернуться на главную
           </button>
         </div>
@@ -105,9 +121,8 @@ function TakeawayCheckoutPage() {
           <p className={styles.emptyText}>Добавьте блюда из меню</p>
           <button 
             className={styles.menuButton}
-            onClick={() => navigate('/takeaway')}
+            onClick={() => navigate('/')}
           >
-            <span className={styles.buttonIcon}>🍽️</span>
             Вернуться в меню
           </button>
         </div>
@@ -120,7 +135,6 @@ function TakeawayCheckoutPage() {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <div className={styles.headerIcon}>🥡</div>
             <div className={styles.headerText}>
               <h1 className={styles.headerTitle}>Оформление заказа</h1>
               <p className={styles.headerSubtitle}>Укажите ваши данные для самовывоза</p>
@@ -131,7 +145,6 @@ function TakeawayCheckoutPage() {
         <div className={styles.content}>
           <div className={styles.orderSummary}>
             <h3 className={styles.summaryTitle}>
-              <span className={styles.summaryIcon}>📋</span>
               Ваш заказ
             </h3>
             <div className={styles.items}>
@@ -166,12 +179,10 @@ function TakeawayCheckoutPage() {
 
           <div className={styles.customerForm}>
             <h3 className={styles.formTitle}>
-              <span className={styles.formIcon}>📝</span>
               Ваши данные
             </h3>
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
-                <span className={styles.labelIcon}>👤</span>
                 Имя *
               </label>
               <input
@@ -186,7 +197,6 @@ function TakeawayCheckoutPage() {
             </div>
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
-                <span className={styles.labelIcon}>📞</span>
                 Телефон *
               </label>
               <input
@@ -201,7 +211,6 @@ function TakeawayCheckoutPage() {
             </div>
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
-                <span className={styles.labelIcon}>💬</span>
                 Комментарий к заказу (необязательно)
               </label>
               <textarea
@@ -225,12 +234,10 @@ function TakeawayCheckoutPage() {
             >
               {isSubmitting ? (
                 <>
-                  <span className={styles.spinner}>⏳</span>
                   Обработка...
                 </>
               ) : (
                 <>
-                  <span className={styles.buttonIcon}>✅</span>
                   Оформить заказ
                 </>
               )}

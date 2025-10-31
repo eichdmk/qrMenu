@@ -158,7 +158,7 @@ function HomePage() {
                 <span className={styles.buttonIcon}>🍽️</span>
                 Открыть меню
               </Link>
-              <Link to="/takeaway" className={styles.ctaSecondary}>
+              <Link to="/takeaway/checkout" className={styles.ctaSecondary}>
                 <span className={styles.buttonIcon}>🥡</span>
                 Заказать с собой
               </Link>

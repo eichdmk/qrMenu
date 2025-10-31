@@ -1,11 +1,24 @@
 /* 🏭 МИНИМАЛИСТИЧНЫЙ ФУТЕР */
 
 .footer {
-  background: #2c1810;
-  color: #f5f5dc;
+  background: var(--surface);
+  color: var(--text);
   margin-top: 80px;
   padding-bottom: 120px;
   position: relative;
+}
+
+/* Мягкая верхняя тень и декоративное свечение */
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 140px;
+  background:
+    radial-gradient(120px 60px at 12% 0%, rgba(15, 118, 110, 0.06), transparent 60%),
+    radial-gradient(160px 80px at 88% 0%, rgba(15, 118, 110, 0.05), transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,0.06), transparent 60%);
+  pointer-events: none;
 }
 
 .container {
@@ -36,6 +49,11 @@
   gap: 15px;
 }
 
+.brandLogoImg {
+  height: 150px;
+  display: block;
+}
+
 .logoIcon {
   font-size: 2.5rem;
 }
@@ -46,14 +64,14 @@
 }
 
 .brandText h3 {
-  color: #cd853f;
+  color: var(--accent);
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
 }
 
 .brandSubtitle {
-  color: #a89784;
+  color: var(--muted);
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -61,7 +79,7 @@
 }
 
 .brandSection p {
-  color: #f5f5dc;
+  color: var(--muted);
   margin: 0;
   line-height: 1.6;
   font-size: 1rem;
@@ -79,45 +97,64 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: rgba(205, 133, 63, 0.2);
-  border: 1px solid rgba(205, 133, 63, 0.3);
+  background: #fff;
+  border: 1px solid var(--border);
   border-radius: 50%;
   text-decoration: none;
   transition: var(--transition);
 }
 
 .socialLink:hover {
-  background: #cd853f;
-  border-color: #cd853f;
+  background: var(--accent);
+  border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(205, 133, 63, 0.3);
+  box-shadow: var(--shadow-md);
+}
+
+.socialLink:hover .socialIcon {
+  color: #fff;
 }
 
 .socialIcon {
   font-size: 1.2rem;
+  width: 24px;
+  height: 24px;
+  color: var(--accent, #0f766e);
+  fill: currentColor;
 }
 
 /* Section Styles */
 .section h4 {
-  color: #cd853f;
+  color: var(--accent);
   margin-bottom: 15px;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 .section p {
-  color: #f5f5dc;
+  color: var(--muted);
   margin-bottom: 8px;
   line-height: 1.6;
   font-size: 0.95rem;
+}
+
+/* Ссылки внутри секций */
+.section a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.section a:hover {
+  color: var(--accent);
 }
 
 /* Copyright */
 .copyright {
   text-align: center;
   padding-top: 30px;
-  border-top: 1px solid rgba(205, 133, 63, 0.2);
-  color: #a89784;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
   font-size: 0.85rem;
   font-weight: 400;
 }
@@ -175,5 +212,9 @@
   
   .socialIcon {
     font-size: 1rem;
+    width: 20px;
+    height: 20px;
+    color: var(--accent, #0f766e);
+    fill: currentColor;
   }
 }

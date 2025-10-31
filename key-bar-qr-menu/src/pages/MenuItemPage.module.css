@@ -11,10 +11,12 @@
   padding: 10px 0;
   margin-bottom: 30px;
   transition: color 0.3s ease;
+  padding: 5px 10px;
 }
 
 .backButton:hover {
-  color: var(--primary);
+  color: var(--accent);
+  color: white;
 }
 
 .content {
@@ -78,7 +80,7 @@
 .price {
   font-size: 2.5rem;
   font-weight: bold;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .quantitySection {
@@ -112,8 +114,8 @@
 }
 
 .quantityControls button:hover {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--accent);
+  color: #fff;
 }
 
 .quantityControls span {
@@ -125,9 +127,9 @@
 
 .addButton {
   width: 100%;
-  padding: 18px;
-  background-color: var(--primary);
-  color: white;
+  padding: 8px 10px;
+  background-color: var(--accent);
+  color: #fff;
   border-radius: 8px;
   font-size: 1.2rem;
   font-weight: 600;
@@ -135,9 +137,9 @@
 }
 
 .addButton:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .notFound {
@@ -152,8 +154,8 @@
 
 .notFound button {
   padding: 12px 24px;
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--accent);
+  color: #fff;
   border-radius: 8px;
   font-weight: 600;
 }

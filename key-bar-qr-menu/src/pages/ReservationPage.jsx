@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { CalendarIcon, TableIcon } from "../components/Icons";
+import { HomeIcon, ClockIcon, UserIcon, CheckIcon } from "../components/Icons";
 import { reservationsAPI } from "../api/reservations";
 import { toast } from "react-toastify";
 import { useScrollToTop } from "../hooks/useScrollToTop";
@@ -19,6 +21,16 @@ function ReservationPage() {
   const [loading, setLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const navigate = useNavigate();
+
+  // Предопределенные слоты времени: каждые 15 минут с 10:00 до 23:00
+  const timeSlots = Array.from({ length: (23 - 10) * 4 + 1 }, (_, index) => {
+    const minutesFromStart = index * 15; // 15-минутные шаги
+    const hour = 10 + Math.floor(minutesFromStart / 60);
+    const minute = minutesFromStart % 60;
+    const hh = String(hour).padStart(2, "0");
+    const mm = String(minute).padStart(2, "0");
+    return `${hh}:${mm}`;
+  });
 
   // Скроллим наверх при загрузке страницы
   useScrollToTop();
@@ -68,17 +80,36 @@ function ReservationPage() {
       return;
     }
 
-    const start_at = new Date(`${date}T${time}:00`);
-    const end_at = new Date(start_at);
-    end_at.setHours(end_at.getHours() + 2);
+    // Создаём дату в локальном часовом поясе с явным указанием смещения
+    const startDate = new Date(`${date}T${time}:00`);
+    const endDate = new Date(startDate);
+    endDate.setHours(endDate.getHours() + 2);
+    
+    // Форматируем с явным указанием локального часового пояса
+    const formatLocalISO = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      
+      // Получаем смещение часового пояса в формате ±HH:MM
+      const timezoneOffset = -date.getTimezoneOffset(); // Инвертируем, так как getTimezoneOffset возвращает обратное смещение
+      const offsetHours = String(Math.floor(Math.abs(timezoneOffset) / 60)).padStart(2, '0');
+      const offsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(2, '0');
+      const offsetSign = timezoneOffset >= 0 ? '+' : '-';
+      
+      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMinutes}`;
+    };
 
     try {
       await reservationsAPI.create({
         table_id: Number(table_id),
         customer_name,
         customer_phone,
-        start_at: start_at.toISOString(),
-        end_at: end_at.toISOString(),
+        start_at: formatLocalISO(startDate),
+        end_at: formatLocalISO(endDate),
       });
 
       setSubmitSuccess(true);
@@ -94,26 +125,26 @@ function ReservationPage() {
     return (
       <div className={styles.successPage}>
         <div className={styles.successContent}>
-          <div className={styles.successIcon}>✅</div>
+          <div className={styles.successIcon}><CheckIcon size={20} /></div>
           <h1 className={styles.successTitle}>Бронирование подтверждено!</h1>
           <div className={styles.successInfo}>
             <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>📅 Дата:</span>
+              <span className={styles.infoLabel}><CalendarIcon size={16} /> Дата:</span>
               <span className={styles.infoValue}>{formData.date}</span>
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>🕐 Время:</span>
+              <span className={styles.infoLabel}><ClockIcon size={16} /> Время:</span>
               <span className={styles.infoValue}>{formData.time}</span>
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>🪑 Столик:</span>
+              <span className={styles.infoLabel}><TableIcon size={16} /> Столик:</span>
               <span className={styles.infoValue}>
                 №{tables.find(t => t.id === Number(formData.table_id))?.name}
               </span>
             </div>
           </div>
-          <button className={styles.homeButton} onClick={() => navigate("/")}>
-            <span className={styles.buttonIcon}>🏠</span>
+          <button className={styles.homeButton} onClick={() => navigate("/")}> 
+            <span className={styles.buttonIcon}><HomeIcon size={18} /></span>
             Вернуться на главную
           </button>
         </div>
@@ -126,7 +157,6 @@ function ReservationPage() {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <div className={styles.headerIcon}>📅</div>
             <div className={styles.headerText}>
               <h1 className={styles.headerTitle}>Бронирование столика</h1>
               <p className={styles.headerSubtitle}>
@@ -140,7 +170,7 @@ function ReservationPage() {
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formSection}>
               <h3 className={styles.formSectionTitle}>
-                <span className={styles.sectionIcon}>📅</span>
+                <span className={styles.sectionIcon}><CalendarIcon size={16} /></span>
                 Дата и время
               </h3>
               <div className={styles.formRow}>
@@ -160,17 +190,21 @@ function ReservationPage() {
 
                 <div className={styles.formGroup}>
                   <label htmlFor="time">Время *</label>
-                  <input
-                    type="time"
+                  <select
                     id="time"
                     name="time"
                     value={formData.time}
                     onChange={handleChange}
-                    min="10:00"
-                    max="23:00"
                     required
                     className={styles.formInput}
-                  />
+                  >
+                    <option value="">-- Выберите время --</option>
+                    {timeSlots.map((slot) => (
+                      <option key={slot} value={slot}>
+                        {slot}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -191,7 +225,7 @@ function ReservationPage() {
 
             <div className={styles.formSection}>
               <h3 className={styles.formSectionTitle}>
-                <span className={styles.sectionIcon}>🪑</span>
+                <span className={styles.sectionIcon}><TableIcon size={16} /></span>
                 Выбор столика
               </h3>
               <div className={styles.formGroup}>
@@ -220,7 +254,7 @@ function ReservationPage() {
 
             <div className={styles.formSection}>
               <h3 className={styles.formSectionTitle}>
-                <span className={styles.sectionIcon}>👤</span>
+                <span className={styles.sectionIcon}><UserIcon size={16} /></span>
                 Контактные данные
               </h3>
               <div className={styles.formGroup}>
@@ -259,12 +293,12 @@ function ReservationPage() {
             >
               {loading ? (
                 <>
-                  <span className={styles.spinner}>⏳</span>
+                  <span className={styles.spinner}><ClockIcon size={18} /></span>
                   Бронируем...
                 </>
               ) : (
                 <>
-                  <span className={styles.buttonIcon}>✅</span>
+                  <span className={styles.buttonIcon}><CheckIcon size={18} /></span>
                   Забронировать
                 </>
               )}
@@ -274,7 +308,7 @@ function ReservationPage() {
           <aside className={styles.tablesSection}>
             <div className={styles.availabilityInfo}>
               <h3 className={styles.availabilityTitle}>
-                <span className={styles.titleIcon}>🪑</span>
+                <span className={styles.titleIcon}><TableIcon size={16} /></span>
                 Статус столиков
               </h3>
               <div className={styles.tablesGrid}>

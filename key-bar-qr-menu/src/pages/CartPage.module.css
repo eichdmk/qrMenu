@@ -16,13 +16,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 248, 220, 0.8);
-  backdrop-filter: blur(20px);
-  border: 2px solid rgba(210, 105, 30, 0.2);
-  border-radius: var(--radius-xl);
+  background: #fff;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   padding: 30px 40px;
   margin-bottom: 40px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow);
   position: relative;
 }
 
@@ -37,8 +37,8 @@
     45deg,
     transparent,
     transparent 2px,
-    rgba(139, 69, 19, 0.02) 2px,
-    rgba(139, 69, 19, 0.02) 4px
+    rgba(15, 118, 110, 0.04) 2px,
+    rgba(15, 118, 110, 0.04) 4px
   );
   border-radius: var(--radius-xl);
   pointer-events: none;
@@ -80,10 +80,10 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #8b4513;
-  border: 2px solid rgba(210, 105, 30, 0.3);
-  border-radius: var(--radius-full);
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -93,10 +93,10 @@
 }
 
 .continueButton:hover {
-  background: white;
+  background: rgba(15, 118, 110, 0.08);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(210, 105, 30, 0.5);
+  border-color: var(--accent);
 }
 
 .buttonIcon {
@@ -220,9 +220,9 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 2px solid #d2691e;
-  background: white;
-  color: #d2691e;
+  border: 1px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
   font-weight: 600;
   font-size: 1.1rem;
   cursor: pointer;
@@ -233,8 +233,8 @@
 }
 
 .quantityButton:hover:not(:disabled) {
-  background: #d2691e;
-  color: white;
+  background: var(--accent);
+  color: #fff;
   transform: scale(1.1);
 }
 
@@ -245,7 +245,7 @@
 
 .itemQuantity {
   font-weight: 700;
-  color: #8b4513;
+  color: var(--text-primary);
   font-size: 1.2rem;
   min-width: 30px;
   text-align: center;
@@ -260,20 +260,19 @@
 
 .itemTotalLabel {
   font-size: 0.85rem;
-  color: rgba(139, 69, 19, 0.7);
+  color: var(--muted);
 }
 
 .itemTotalPrice {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #d2691e;
+  color: var(--accent);
 }
 
 .removeButton {
-  width: 40px;
   height: 40px;
-  border-radius: 50%;
-  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
   background: linear-gradient(135deg, #ff6b6b, #ee5a52);
   color: white;
   font-size: 1.2rem;
@@ -296,9 +295,9 @@
   justify-content: center;
   gap: 10px;
   padding: 14px 28px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #8b4513;
-  border: 2px solid rgba(210, 105, 30, 0.3);
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
   border-radius: var(--radius);
   font-weight: 600;
   font-size: 1rem;
@@ -307,11 +306,11 @@
 }
 
 .clearButton:hover {
-  background: linear-gradient(135deg, #fed7d7, #feb2b2);
-  color: #c53030;
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--accent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(255, 107, 107, 0.5);
+  border-color: var(--accent);
 }
 
 /* Summary Section */
@@ -349,7 +348,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(210, 105, 30, 0.1);
+  border-bottom: 1px solid var(--border);
 }
 
 .summaryLabel {
@@ -370,7 +369,7 @@
   align-items: center;
   padding: 20px 0;
   margin-top: 12px;
-  border-top: 2px solid rgba(210, 105, 30, 0.2);
+  border-top: 1px solid var(--border);
 }
 
 .totalLabel {
@@ -408,29 +407,29 @@
 }
 
 .checkoutButton {
-  background: #cd853f;
-  color: white;
-  box-shadow: 0 2px 8px rgba(205, 133, 63, 0.3);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow);
 }
 
 .checkoutButton:hover {
-  background: #d2691e;
+  background: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .reservationButton {
-  background: white;
-  color: var(--text-primary);
-  border: 2px solid var(--border-dark);
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
 }
 
 .reservationButton:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--accent);
+  border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 /* Empty Cart */
@@ -463,8 +462,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px 32px;
-  background: var(--gradient-secondary);
-  color: white;
+  background: var(--accent);
+  color: #fff;
   border: none;
   border-radius: var(--radius-full);
   font-weight: 700;
@@ -476,7 +475,7 @@
 
 .menuButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(255, 140, 0, 0.4);
+  box-shadow: var(--shadow-xl);
 }
 
 /* Responsive Design */
@@ -573,8 +572,6 @@
   }
   
   .quantityButton {
-    width: 28px;
-    height: 28px;
     font-size: 1rem;
   }
   

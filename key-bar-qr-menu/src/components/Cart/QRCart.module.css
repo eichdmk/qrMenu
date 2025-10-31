@@ -30,7 +30,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  background: var(--accent);
   border-radius: 24px; /* Менее агрессивный радиус */
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
@@ -67,6 +67,7 @@
 .icon {
   font-size: 1.5rem;
   color: white;
+  margin-top: 5px;
 }
 
 .badge {
@@ -270,7 +271,7 @@
   justify-content: center;
   font-size: 1.1rem;
   font-weight: 600;
-  background-color: #8b4513;
+  background-color: var(--accent);
   color: white;
   border: none;
   cursor: pointer;
@@ -283,7 +284,7 @@
 
 .quantityButton:hover:not(:disabled),
 .quantityButton:focus:not(:disabled) {
-  background-color: #654321;
+  background-color: var(--accent-hover);
   transform: scale(1.08);
   outline: none;
 }
@@ -313,7 +314,7 @@
 
 .itemPrice {
   font-weight: 600;
-  color: #8b4513;
+  color: var(--accent);
   font-size: 0.95rem;
   white-space: nowrap;
 }
@@ -326,7 +327,7 @@
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
-  background-color: #ff4d4d;
+  background-color: var(--danger);
   color: white;
   border: none;
   cursor: pointer;
@@ -411,7 +412,7 @@
 }
 
 .totalPrice {
-  color: #8b4513;
+  color: var(--accent);
   font-size: 1.35rem;
   font-weight: 700;
 }
@@ -450,19 +451,19 @@
 .clearButton:focus {
   background-color: #ffe6e6;
   color: #d32f2f;
-  border-color: #ff9999;
+  border-color: var(--danger);
   outline: none;
 }
 
 .checkoutButton {
-  background-color: #8b4513;
+  background-color: var(--accent);
   color: white;
   box-shadow: 0 2px 8px rgba(139, 69, 19, 0.25);
 }
 
 .checkoutButton:hover:not(:disabled),
 .checkoutButton:focus:not(:disabled) {
-  background-color: #654321;
+  background-color: var(--accent-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 69, 19, 0.35);
   outline: none;

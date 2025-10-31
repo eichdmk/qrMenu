@@ -1,10 +1,9 @@
 import pool from '../db.js';
 
-// Кеш для категорий (TTL: 10 минут)
 let categoriesCache = {
   data: null,
   timestamp: 0,
-  ttl: 10 * 60 * 1000 // 10 минут
+  ttl: 10 * 60 * 1000 
 };
 
 const getCategoriesWithCache = async () => {
@@ -48,7 +47,6 @@ export const createCategory = async (request, reply) => {
       [name]
     );
     
-    // Инвалидируем кеш
     invalidateCategoriesCache();
     
     return reply.status(201).send(result.rows[0]);
@@ -69,7 +67,6 @@ export const updateCategory = async (request, reply) => {
     );
     if (result.rows.length === 0) return reply.status(404).send({ message: 'Категория не найдена' });
     
-    // Инвалидируем кеш
     invalidateCategoriesCache();
     
     return reply.send(result.rows[0]);
@@ -83,11 +80,9 @@ export const updateCategory = async (request, reply) => {
 export const deleteCategory = async (request, reply) => {
   try {
     const { id } = request.params;
-    // Можно добавить проверку: есть ли блюда в категории
     const result = await pool.query('DELETE FROM categories WHERE id=$1 RETURNING *', [id]);
     if (result.rows.length === 0) return reply.status(404).send({ message: 'Категория не найдена' });
     
-    // Инвалидируем кеш
     invalidateCategoriesCache();
     
     return reply.send({ message: 'Категория удалена' });

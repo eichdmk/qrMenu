@@ -25,16 +25,14 @@ function CartPage() {
       <div className={styles.cartPage}>
         <div className={styles.container}>
           <div className={styles.emptyCart}>
-            <div className={styles.emptyIcon}>🛒</div>
             <h2 className={styles.emptyTitle}>Корзина пуста</h2>
             <p className={styles.emptyText}>
               Добавьте блюда из меню, чтобы сделать заказ
             </p>
             <button 
               className={styles.menuButton}
-              onClick={() => navigate('/menu')}
+              onClick={() => navigate('/')}
             >
-              <span className={styles.buttonIcon}>🍽️</span>
               Перейти в меню
             </button>
           </div>
@@ -48,7 +46,6 @@ function CartPage() {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <div className={styles.headerIcon}>🛒</div>
             <div className={styles.headerText}>
               <h1 className={styles.headerTitle}>Корзина</h1>
               <p className={styles.headerSubtitle}>
@@ -58,7 +55,7 @@ function CartPage() {
           </div>
           <button 
             className={styles.continueButton}
-            onClick={() => navigate('/menu')}
+            onClick={() => navigate('/')}
           >
             <span className={styles.buttonIcon}>◀</span>
             Продолжить покупки
@@ -122,7 +119,7 @@ function CartPage() {
                     onClick={() => handleRemoveItem(item.id)}
                     title="Удалить товар"
                   >
-                    🗑️
+                    Удалить
                   </button>
                 </div>
               ))}
@@ -132,7 +129,6 @@ function CartPage() {
               className={styles.clearButton}
               onClick={handleClearCart}
             >
-              <span className={styles.buttonIcon}>🧹</span>
               Очистить корзину
             </button>
           </div>
@@ -140,8 +136,7 @@ function CartPage() {
           <aside className={styles.summarySection}>
             <div className={styles.summary}>
               <h3 className={styles.summaryTitle}>
-                <span className={styles.summaryIcon}>📊</span>
-                Итого
+                Итого:
               </h3>
               
               <div className={styles.summaryRow}>
@@ -164,16 +159,21 @@ function CartPage() {
                   className={styles.checkoutButton}
                   onClick={() => navigate('/takeaway/checkout')}
                 >
-                  <span className={styles.buttonIcon}>🥡</span>
                   Оформить самовывоз
                 </button>
                 <button 
+                  className={styles.checkoutButton}
+                  onClick={() => navigate('/delivery/checkout')}
+                >
+                  Доставка на дом
+                </button>
+                {/* <button 
                   className={styles.reservationButton}
                   onClick={() => navigate('/reservation')}
                 >
                   <span className={styles.buttonIcon}>📅</span>
                   Забронировать столик
-                </button>
+                </button> */}
               </div>
             </div>
           </aside>

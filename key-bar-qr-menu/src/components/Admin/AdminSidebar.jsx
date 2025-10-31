@@ -36,7 +36,7 @@ function AdminSidebar({ activeTab }) {
               <span className={styles.icon}>
                 <IconComponent size={20} />
               </span>
-              <span>{tab.label}</span>
+              <span className={styles.label}>{tab.label}</span>
             </button>
           );
         })}

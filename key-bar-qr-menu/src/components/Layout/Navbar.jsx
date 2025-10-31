@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
@@ -9,6 +9,7 @@ function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -19,17 +20,26 @@ function Navbar() {
     navigate("/");
   };
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
-        <Link to="/" className={styles.logo}>
-          <span className={styles.logoIcon}>☕</span>
-          <div className={styles.logoText}>
-            <span className={styles.brandName}>Key Bar</span>
-          </div>
+        <Link to="/" className={styles.logo} onClick={closeMenu}>
+          <img
+            src="/logo key.png"
+            alt="Key Bar"
+            className={styles.logoImg}
+          />
         </Link>
 
-        <button className={styles.menuToggle} onClick={toggleMenu}>
+        <button 
+          className={`${styles.menuToggle} ${isMenuOpen ? styles.active : ''}`}
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
           <span></span>
           <span></span>
           <span></span>
@@ -38,11 +48,6 @@ function Navbar() {
         <ul className={`${styles.navLinks} ${isMenuOpen ? styles.active : ""}`}>
           <li>
             <Link to="/" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
-              <span>Главная</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/menu" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
               <span>Меню</span>
             </Link>
           </li>
@@ -51,11 +56,11 @@ function Navbar() {
               <span>Бронирование</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/takeaway" onClick={() => setIsMenuOpen(false)} className={styles.navLink}>
               <span>С собой</span>
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </nav>

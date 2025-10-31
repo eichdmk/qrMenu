@@ -10,7 +10,7 @@ const MenuItemCard = memo(({ item }) => {
   const { addItem } = useCart();
 
   const handleCardClick = useCallback(() => {
-    navigate(`/menu/${item.id}`);
+    navigate(`/${item.id}`);
   }, [navigate, item.id]);
 
   const handleAddClick = useCallback((e) => {
@@ -31,7 +31,6 @@ const MenuItemCard = memo(({ item }) => {
         />
         {!item.available && (
           <div className={styles.unavailableOverlay}>
-            <span className={styles.unavailableIcon}>❌</span>
             <span>Недоступно</span>
           </div>
         )}
@@ -53,9 +52,7 @@ const MenuItemCard = memo(({ item }) => {
             onClick={handleAddClick}
             disabled={!item.available}
           >
-            <span className={styles.buttonIcon}>
-              {item.available ? '➕' : '❌'}
-            </span>
+ 
             <span className={styles.buttonText}>
               {item.available ? "Добавить в корзину" : "Недоступно"}
             </span>

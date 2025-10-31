@@ -51,7 +51,6 @@ export const verifyToken = async (request, reply) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Получаем актуальные данные пользователя из БД
     const userResult = await pool.query('SELECT id, username, role FROM users WHERE id = $1', [decoded.id]);
     
     if (userResult.rows.length === 0) {

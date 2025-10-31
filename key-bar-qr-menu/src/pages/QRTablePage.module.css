@@ -118,35 +118,170 @@
   text-align: center;
   color: white;
   animation: fadeIn 0.6s ease-out;
+  max-width: 600px;
+  padding: 40px 20px;
 }
 
 .successIcon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 4rem;
-  margin-bottom: 20px;
-  animation: bounce 2s infinite;
+  margin: 0 auto 30px;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: scaleIn 0.5s ease-out;
 }
 
-.successContent h2 {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.headerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.successTitle {
+  font-size: 2.8rem;
+  margin-bottom: 0;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.successText {
+  font-size: 1.3rem;
+  margin-bottom: 32px;
+  opacity: 0.95;
+  line-height: 1.6;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.orderNumber {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+  backdrop-filter: blur(15px);
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  padding: 20px 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.3s ease;
+}
+
+.orderNumber:hover {
+  transform: translateY(-2px);
+}
+
+.orderNumberLabel {
+  font-size: 2rem;
   font-weight: 700;
-}
-
-.successContent p {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
+  color: var(--text);
   opacity: 0.9;
 }
 
+.orderNumberValue {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--text);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  letter-spacing: 3px;
+}
+
+@media (max-width: 768px) {
+  .successContent {
+    padding: 30px 16px;
+  }
+
+  .successIcon {
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+    margin-bottom: 24px;
+  }
+
+  .successTitle {
+    font-size: 2rem;
+  }
+
+  .successText {
+    font-size: 1.1rem;
+  }
+
+  .orderNumber {
+    padding: 16px 28px;
+  }
+
+  .orderNumberLabel {
+    font-size: 1.5rem;
+  }
+
+  .orderNumberValue {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+  }
+}
+
 .tableInfo {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 16px 24px;
-  border-radius: var(--radius-lg);
-  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  backdrop-filter: blur(10px);
+  justify-content: center;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.infoIcon {
+  font-size: 2.5rem;
+  opacity: 0.9;
+}
+
+.infoContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.infoValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tableIcon {
@@ -155,23 +290,31 @@
 
 .newOrderButton {
   background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 16px 32px;
-  border-radius: var(--radius-full);
+  color: var(--text);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 16px 40px;
+  border-radius: 50px;
   font-weight: 600;
   font-size: 1.1rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  transition: var(--transition);
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .newOrderButton:hover {
   background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.newOrderButton:active {
+  transform: translateY(0);
 }
 
 .buttonIcon {
@@ -181,10 +324,10 @@
 
 /* Header - Лофт стиль */
 .header {
-  background: rgba(255, 248, 220, 0.8);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
-  border: 2px solid rgba(210, 105, 30, 0.2);
-  border-radius: var(--radius-xl);
+  border: 2px solid var(--border);
+  border-radius: 5px;
   padding: 30px;
   margin-bottom: 40px;
   box-shadow: var(--shadow-lg);
@@ -257,13 +400,13 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 8px;
-  color: #8b4513;
+  color: var(--text);
   word-break: break-word;
   overflow: hidden;
 }
 
 .tableNumber {
-  background: var(--gradient-secondary);
+  background: var(--text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -271,7 +414,7 @@
 
 .tableSubtitle {
   font-size: 1.1rem;
-  color: rgba(139, 69, 19, 0.8);
+  color: var(--text);
   margin: 0;
   word-break: break-word;
   overflow: hidden;
@@ -283,8 +426,8 @@
   align-items: center;
   gap: 8px;
   padding: 16px;
-  background: rgba(255, 248, 220, 0.3);
-  border: 2px solid rgba(210, 105, 30, 0.3);
+  background: var(--bg-card);
+  border: 2px solid var(--border);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(10px);
   flex-shrink: 0;
@@ -298,7 +441,7 @@
 .qrText {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #8b4513;
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: 1px;
   white-space: nowrap;

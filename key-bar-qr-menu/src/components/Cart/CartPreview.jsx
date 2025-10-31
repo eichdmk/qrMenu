@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
 import { formatPrice } from "../../utils/format";
+import { ShoppingCartIcon } from "../Icons";
 import styles from "./CartPreview.module.css";
 
 function CartPreview() {
@@ -19,7 +20,9 @@ function CartPreview() {
     <div className={styles.cartPreview} onClick={handleClick}>
       <div className={styles.content}>
         <div className={styles.iconWrapper}>
-          <span className={styles.icon}>🛒</span>
+          <span className={styles.icon}>
+            <ShoppingCartIcon size={20} />
+          </span>
           {items.length > 0 && (
             <span className={styles.badge}>{items.length}</span>
           )}

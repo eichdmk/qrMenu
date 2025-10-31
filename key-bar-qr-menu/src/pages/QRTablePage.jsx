@@ -4,6 +4,7 @@ import { useMenuPaginated } from "../hooks/useMenuPaginated";
 import { createOrder } from "../api/orders";
 import { tablesAPI } from "../api/tables";
 import { toast } from "react-toastify";
+import { useCart } from "../contexts/CartContext";
 import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import QRCart from "../components/Cart/QRCart";
@@ -13,6 +14,7 @@ import styles from "./QRTablePage.module.css";
 
 function QRTablePage() {
   const { token } = useParams();
+  const { clearCart } = useCart();
   const { 
     menuItems, 
     categories, 
@@ -25,6 +27,7 @@ function QRTablePage() {
   const [table, setTable] = useState(null);
   const [tableLoading, setTableLoading] = useState(true);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderId, setOrderId] = useState(null);
 
   const loading = tableLoading || menuLoading;
 
@@ -65,8 +68,12 @@ function QRTablePage() {
       };
 
       console.log('Sending order data:', orderData);
-      await createOrder(orderData);
+      const response = await createOrder(orderData);
+      setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
+      // Очищаем корзину и sessionStorage после оформления заказа
+      clearCart();
+      sessionStorage.clear();
       toast.success("Заказ принят!");
     } catch (error) {
       console.error('Order error:', error);
@@ -90,11 +97,9 @@ function QRTablePage() {
     return (
       <div className={styles.error}>
         <div className={styles.errorContent}>
-          <div className={styles.errorIcon}>❌</div>
           <h2>Столик не найден</h2>
           <p>Проверьте правильность QR-кода или обратитесь к официанту</p>
           <button className={styles.retryButton}>
-            <span className={styles.buttonIcon}>🔄</span>
             Попробовать снова
           </button>
         </div>
@@ -106,18 +111,31 @@ function QRTablePage() {
     return (
       <div className={styles.success}>
         <div className={styles.successContent}>
-          <div className={styles.successIcon}>✅</div>
-          <h2>Заказ принят!</h2>
-          <p>Официант скоро подойдет к вашему столику</p>
+          <div className={styles.successIcon}>✓</div>
+          <div className={styles.headerSection}>
+            <h2 className={styles.successTitle}>Заказ принят!</h2>
+            {orderId && (
+              <div className={styles.orderNumber}>
+                <span className={styles.orderNumberLabel}>№</span>
+                <span className={styles.orderNumberValue}>{orderId}</span>
+              </div>
+            )}
+          </div>
+          <p className={styles.successText}>Официант скоро подойдет к вашему столику</p>
           <div className={styles.tableInfo}>
-            <span className={styles.tableIcon}>🪑</span>
-            <span>Столик №{table.name}</span>
+            <div className={styles.infoIcon}>🪑</div>
+            <div className={styles.infoContent}>
+              <span className={styles.infoLabel}>Столик</span>
+              <span className={styles.infoValue}>№{table.name}</span>
+            </div>
           </div>
           <button
             className={styles.newOrderButton}
-            onClick={() => setOrderPlaced(false)}
+            onClick={() => {
+              setOrderPlaced(false);
+              setOrderId(null);
+            }}
           >
-            <span className={styles.buttonIcon}>🍽️</span>
             Сделать новый заказ
           </button>
         </div>
@@ -132,12 +150,10 @@ function QRTablePage() {
         <div className={styles.header}>
           <div className={styles.headerContent}>
             <div className={styles.tableInfo}>
-              <div className={styles.tableIconWrapper}>
-                <span className={styles.tableIcon}>🪑</span>
-              </div>
+
               <div className={styles.tableDetails}>
                 <h1 className={styles.tableTitle}>
-                  <span className={styles.tableNumber}>№{table.name}</span>
+                  <span className={styles.tableNumber}>{table.name}</span>
                 </h1>
                 <p className={styles.tableSubtitle}>
                   Сделайте заказ прямо со своего смартфона
@@ -145,7 +161,6 @@ function QRTablePage() {
               </div>
             </div>
             <div className={styles.qrInfo}>
-              <span className={styles.qrIcon}>📱</span>
               <span className={styles.qrText}>QR Меню</span>
             </div>
           </div>
@@ -153,7 +168,6 @@ function QRTablePage() {
 
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>
-            <span className={styles.sectionIcon}>🍽️</span>
             Наше меню
           </h2>
           <p className={styles.sectionSubtitle}>

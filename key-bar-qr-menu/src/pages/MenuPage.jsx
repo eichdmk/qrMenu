@@ -3,6 +3,8 @@ import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import CartPreview from "../components/Cart/CartPreview";
 import { useScrollToTop, useScrollToTopOnChange } from "../hooks/useScrollToTop";
+import { Link } from "react-router-dom";
+import { CalendarIcon, TableIcon } from "../components/Icons";
 import styles from "./MenuPage.module.css";
 
 function MenuPage() {
@@ -36,12 +38,33 @@ function MenuPage() {
       <div className={styles.container} id="menu">
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>
-            <span className={styles.sectionIcon}>📋</span>
             Наше меню
           </h2>
           <p className={styles.sectionSubtitle}>
             Выберите категорию и наслаждайтесь вкусными блюдами
           </p>
+        </div>
+
+        {/* Reservation CTA - Premium Hero */}
+        <div className={styles.reservationBanner}>
+          <div className={styles.reservationOverlay}></div>
+          <div className={styles.reservationContent}>
+            <div className={styles.reservationText}>
+              <div className={styles.kicker}>Резерв столиков</div>
+              <h3 className={styles.reservationTitle}>
+                <span className={styles.reservationIcon}><CalendarIcon size={22} /></span>
+                Ваш вечер — за нашим столом
+              </h3>
+              <p className={styles.reservationSubtitle}>Выберите удобное время, укажите контакты — мы подготовим идеальное место.</p>
+            </div>
+            <div className={styles.reservationActions}>
+              <Link to="/reservation" className={styles.reservationButton}>
+                <span className={styles.buttonIcon}><TableIcon size={18} /></span>
+                Забронировать столик
+              </Link>
+              <Link to="/reservation" className={styles.reservationLink}>Подробнее</Link>
+            </div>
+          </div>
         </div>
 
         <CategoryFilter

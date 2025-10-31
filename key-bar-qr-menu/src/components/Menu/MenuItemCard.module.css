@@ -34,7 +34,7 @@
 .card:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-xl);
-  border-color: rgba(102, 126, 234, 0.2);
+  border-color: rgba(15, 118, 110, 0.2);
 }
 
 .card.unavailable {
@@ -171,17 +171,17 @@
 }
 
 .priceTag {
-  background: var(--gradient-secondary);
+  background: rgba(15, 118, 110, 0.08);
   padding: 8px 16px;
-  border-radius: var(--radius-full);
+  border-radius: 10px;
+  border: 1px solid var(--accent);
   box-shadow: var(--shadow);
 }
 
 .price {
   font-size: 1.2rem;
   font-weight: 700;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  color: var(--accent);
 }
 
 /* Description */
@@ -201,8 +201,8 @@
 /* Add Button - Лофт стиль */
 .addButton {
   width: 100%;
-  background: var(--gradient-secondary);
-  color: white;
+  background: var(--accent);
+  color: #fff;
   padding: 14px 20px;
   border-radius: var(--radius);
   font-weight: 600;
@@ -232,18 +232,20 @@
 }
 
 .addButton:hover:not(:disabled) {
+  background: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .addButton:active {
   transform: translateY(0);
 }
 
-.addButton.disabled {
-  background: linear-gradient(135deg, #a0aec0, #718096);
+.addButton.disabled,
+.addButton:disabled {
+  background: var(--accent);
+  opacity: 0.5;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .buttonIcon {

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { formatPrice } from "../../utils/format";
 import styles from "./QRCart.module.css";
+import { ShoppingCartIcon } from "../Icons";
+
 
 function QRCart({ onCheckout, checkoutText = "Отправить заказ", isProcessing = false }) {
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
@@ -25,7 +27,7 @@ function QRCart({ onCheckout, checkoutText = "Отправить заказ", is
     <div className={`${styles.qrCart} ${isExpanded ? styles.expanded : ''}`}>
       <div className={styles.compactView} onClick={() => setIsExpanded(!isExpanded)}>
         <div className={styles.iconWrapper}>
-          <span className={styles.icon}>🛒</span>
+          <span className={styles.icon}><ShoppingCartIcon size={20} /></span>
           <span className={styles.badge}>{items.length}</span>
         </div>
         <div className={styles.info}>
@@ -103,7 +105,6 @@ function QRCart({ onCheckout, checkoutText = "Отправить заказ", is
 
           <div className={styles.commentSection}>
             <label className={styles.commentLabel}>
-              <span className={styles.commentIcon}>💬</span>
               Комментарий к заказу (необязательно)
             </label>
             <textarea

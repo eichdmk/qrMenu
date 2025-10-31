@@ -37,6 +37,8 @@
   font-size: 1rem;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .navButton:hover {
@@ -57,34 +59,145 @@
   justify-content: center;
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
 }
 
+.label {
+  white-space: nowrap;
+}
+
+/* Планшеты */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .header {
+    padding: 25px 15px;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+  }
+
+  .navButton {
+    padding: 12px 15px;
+    font-size: 0.95rem;
+    gap: 12px;
+  }
+}
+
+/* Мобильные устройства */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
     height: auto;
     position: relative;
     top: 0;
+    box-shadow: 0 2px 8px var(--shadow);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
   }
 
   .nav {
     display: flex;
+    flex-direction: row;
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    gap: 4px;
+    justify-content: space-between;
+  }
+
+  .nav::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .nav::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+
+  .nav::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
   }
 
   .navButton {
     flex-direction: column;
-    min-width: 100px;
-    padding: 10px;
+    flex: 1;
+    min-width: 0;
+    max-width: 20%;
+    padding: 8px 4px;
     text-align: center;
+    gap: 4px;
     border-left: none;
-    border-bottom: 3px solid transparent;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px;
+    margin-right: 4px;
+    flex-shrink: 1;
+  }
+
+  .navButton:last-child {
+    margin-right: 0;
   }
 
   .navButton:hover,
   .navButton.active {
     border-left: none;
     border-bottom-color: var(--primary);
+    background-color: rgba(255, 153, 0, 0.1);
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .label {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .header {
+    padding: 15px;
+  }
+
+  .header h2 {
+    font-size: 1rem;
+  }
+
+  .nav {
+    padding: 8px 6px;
+    gap: 3px;
+  }
+
+  .navButton {
+    padding: 6px 3px;
+    gap: 3px;
+    border-radius: 4px;
+    margin-right: 3px;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .label {
+    font-size: 0.65rem;
   }
 }

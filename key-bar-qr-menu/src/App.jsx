@@ -4,13 +4,14 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import Navbar from "./components/Layout/Navbar";
 import Footer from "./components/Layout/Footer";
-import HomePage from "./pages/HomePage";
+// import HomePage from "./pages/HomePage";
 import MenuPage from "./pages/MenuPage";
 import CartPage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
 import QRTablePage from "./pages/QRTablePage";
-import TakeawayPage from "./pages/TakeawayPage";
+// import TakeawayPage from "./pages/TakeawayPage";
 import TakeawayCheckoutPage from "./pages/TakeawayCheckoutPage";
+import DeliveryCheckoutPage from "./pages/DeliveryCheckoutPage";
 import ReservationPage from "./pages/ReservationPage";
 import MenuItemPage from "./pages/MenuItemPage";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -43,13 +44,14 @@ const LoadingSpinner = () => (
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/menu" element={<MenuPage />} />
-      <Route path="/menu/:id" element={<MenuItemPage />} />
+      {/* <Route path="/" element={<HomePage />} /> */}
+      <Route path="/" element={<MenuPage />} />
+      <Route path="/:id" element={<MenuItemPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/reservation" element={<ReservationPage />} />
-      <Route path="/takeaway" element={<TakeawayPage />} />
+     { /* <Route path="/takeaway" element={<TakeawayPage />} /> */}
       <Route path="/takeaway/checkout" element={<TakeawayCheckoutPage />} />
+      <Route path="/delivery/checkout" element={<DeliveryCheckoutPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/table/:token" element={<QRTablePage />} />
       <Route 

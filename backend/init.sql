@@ -60,6 +60,7 @@ CREATE TABLE orders (
     customer_name VARCHAR(100),
     customer_phone VARCHAR(20),
     comment TEXT,
+    completed_at TIMESTAMP,
     status VARCHAR(50) DEFAULT 'new',
     total_amount INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT NOW()

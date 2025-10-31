@@ -3,22 +3,19 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Для __dirname в ES-модулях
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.join(__dirname, '../uploads');
 
-// Кеш для меню (TTL: 5 минут)
 let menuCache = {
   data: null,
   timestamp: 0,
-  ttl: 5 * 60 * 1000 // 5 минут
+  ttl: 5 * 60 * 1000 
 };
 
 const getMenuItemsWithCache = async () => {
   const now = Date.now();
   
-  // Проверяем, нужно ли обновить кеш
   if (menuCache.data && (now - menuCache.timestamp) < menuCache.ttl) {
     return menuCache.data;
   }

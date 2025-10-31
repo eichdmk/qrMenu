@@ -91,6 +91,113 @@
   margin: 0 auto;
 }
 
+/* Reservation Banner */
+.reservationBanner {
+  position: relative;
+  border-radius: 20px;
+  padding: 36px;
+  margin: 0 auto 36px;
+  overflow: hidden;
+  background: #0f0f0f url('/ribeye-steak-with-grilled-vegetables.jpg') center/cover no-repeat;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.reservationOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 0% 0%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 35%, rgba(0,0,0,0.55) 100%),
+              linear-gradient(0deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35));
+  pointer-events: none;
+}
+
+.reservationContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.reservationText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kicker {
+  display: inline-block;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.reservationTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  margin-top: 10px;
+}
+
+.reservationIcon {
+  display: inline-flex;
+}
+
+.reservationSubtitle {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.9);
+}
+
+.reservationActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.reservationButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.reservationButton:hover {
+  transform: translateY(-1px);
+  color: white;
+}
+
+.reservationLink {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  display: none;
+}
+
+.reservationLink:hover {
+  color: var(--text-primary);
+  color: white;
+
+}
+
 /* Menu Grid */
 .menuGrid {
   display: grid;
@@ -150,5 +257,24 @@
   
   .sectionHeader {
     margin-bottom: 40px;
+  }
+
+  .reservationContent {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reservationActions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+
+  .reservationBanner {
+    padding: 24px;
+  }
+
+  .reservationTitle {
+    font-size: 1.6rem;
   }
 }

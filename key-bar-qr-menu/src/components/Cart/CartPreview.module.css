@@ -25,15 +25,15 @@
   align-items: center;
   gap: 16px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  background: var(--accent);
   border-radius: 50px;
-  box-shadow: 0 8px 24px rgba(44, 24, 16, 0.25);
+  box-shadow: var(--shadow-lg);
   transition: var(--transition);
 }
 
 .cartPreview:hover .content {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(44, 24, 16, 0.35);
+  box-shadow: var(--shadow-xl);
 }
 
 .iconWrapper {
@@ -50,14 +50,16 @@
 
 .icon {
   font-size: 1.5rem;
+  color: white;
+  margin-top: 5px;
 }
 
 .badge {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #ff6347;
-  color: white;
+  background: #fff;
+  color: var(--accent);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 3px 7px;
@@ -67,7 +69,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(255, 99, 71, 0.4);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow);
 }
 
 @keyframes pulse {
