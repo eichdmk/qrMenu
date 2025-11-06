@@ -123,10 +123,17 @@ function DeliveryCheckoutPage() {
     }, 0);
   };
 
+  // Обработка кликов вне выпадающих списков
   useEffect(() => {
     const onClickOutside = (e) => {
+      if (addressInputRef.current && !addressInputRef.current.contains(e.target)) {
+        setShowAddressDropdown(false);
+      }
       if (streetInputRef.current && !streetInputRef.current.contains(e.target)) {
         setShowStreetDropdown(false);
+      }
+      if (houseInputRef.current && !houseInputRef.current.contains(e.target)) {
+        setShowHouseDropdown(false);
       }
     };
     document.addEventListener('mousedown', onClickOutside);
@@ -138,6 +145,7 @@ function DeliveryCheckoutPage() {
     const query = (addressLine || '').trim();
     if (query.length < 3) {
       setAddressLineSuggestions([]);
+      setIsAddressLoading(false);
       return;
     }
     setIsAddressLoading(true);
@@ -155,8 +163,7 @@ function DeliveryCheckoutPage() {
           body: JSON.stringify({
             query,
             count: 10,
-            from_bound: { value: 'house' },
-            to_bound: { value: 'house' },
+            // Убираем ограничения по границам для поиска полного адреса
             locations: [{ kladr_id: '2000000000000' }],
             locations_boost: [{ city: 'Грозный' }]
           })
@@ -164,11 +171,14 @@ function DeliveryCheckoutPage() {
         const data = await res.json();
         const items = (data?.suggestions || []).map(s => ({
           value: s.value,
-          street: s.data?.street_with_type || '',
+          street: s.data?.street_with_type || s.data?.street || '',
           house: s.data?.house || ''
         }));
         setAddressLineSuggestions(items);
-      } catch (_) {
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Ошибка при загрузке адресов:', err);
+        }
       } finally {
         setIsAddressLoading(false);
       }
@@ -442,15 +452,61 @@ function DeliveryCheckoutPage() {
 
             <div className={styles.formGroup} ref={addressInputRef} style={{ position: 'relative' }}>
               <label className={styles.formLabel}><span className={styles.labelIcon}></span>Адрес (улица и дом) *</label>
-              <input type="text" name="addressLine" value={addressLine} onChange={handleAddressLineChange} placeholder="Например: г. Грозный, проспект Путина, 1" className={styles.formInput} required autoComplete="off" onFocus={() => addressLine && setShowAddressDropdown(true)} />
+              <input 
+                type="text" 
+                name="addressLine" 
+                value={addressLine} 
+                onChange={handleAddressLineChange} 
+                placeholder="Например: проспект Путина 1" 
+                className={styles.formInput} 
+                required 
+                autoComplete="off" 
+                onFocus={() => {
+                  if (addressLine && addressLine.length >= 3) {
+                    setShowAddressDropdown(true);
+                  }
+                }}
+              />
               {DADATA_API_KEY && showAddressDropdown && (addressLineSuggestions.length > 0 || isAddressLoading) && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#fff', border: '1px solid #eee', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', zIndex: 10, marginTop: 6, maxHeight: 240, overflowY: 'auto' }}>
+                <div style={{ 
+                  position: 'absolute', 
+                  top: '100%', 
+                  left: 0, 
+                  right: 0, 
+                  background: '#fff', 
+                  border: '1px solid #eee', 
+                  borderRadius: 8, 
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.08)', 
+                  zIndex: 10, 
+                  marginTop: 6, 
+                  maxHeight: 240, 
+                  overflowY: 'auto'
+                }}>
                   {isAddressLoading && (
-                    <div style={{ padding: '10px 12px', color: '#666' }}>Загрузка...</div>
+                    <div style={{ padding: '10px 12px', color: '#666', textAlign: 'center' }}>Загрузка адресов...</div>
+                  )}
+                  {!isAddressLoading && addressLineSuggestions.length === 0 && addressLine.length >= 3 && (
+                    <div style={{ padding: '10px 12px', color: '#666', textAlign: 'center' }}>Адреса не найдены</div>
                   )}
                   {addressLineSuggestions.map((s, idx) => (
-                    <button key={idx} type="button" onClick={() => handleSelectAddressLine(s)} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', border: 'none', background: 'transparent', cursor: 'pointer' }}>
-                      <div style={{ fontWeight: 600, color: "black" }}>{s.value}</div>
+                    <button 
+                      key={idx} 
+                      type="button" 
+                      onClick={() => handleSelectAddressLine(s)} 
+                      onMouseDown={(e) => e.preventDefault()}
+                      style={{ 
+                        width: '100%', 
+                        textAlign: 'left', 
+                        padding: '10px 12px', 
+                        border: 'none', 
+                        background: 'transparent', 
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                    >
+                      <div style={{ fontWeight: 600, color: "black", fontSize: '14px' }}>{s.value}</div>
                     </button>
                   ))}
                 </div>
