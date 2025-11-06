@@ -4,7 +4,7 @@
 
 ![Key Bar Logo](https://img.shields.io/badge/Key%20Bar-Loft%20Cafe-8B4513?style=for-the-badge&logo=coffee)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js)
+![Node.js](https://img.shields.io/badge/Node.js-Fastify-339933?style=for-the-badge&logo=node.js)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?style=for-the-badge&logo=postgresql)
 
 ## 🎯 Описание проекта
