@@ -235,14 +235,21 @@ export const deleteMenuItem = async (request, reply) => {
   try {
     const { id } = request.params;
 
+    // Проверяем только заказы младше 7 дней (старые заказы автоматически очищаются)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
     const orderCheck = await pool.query(
-      'SELECT 1 FROM order_items WHERE menu_item_id = $1 LIMIT 1',
-      [id]
+      `SELECT 1 FROM order_items oi
+       JOIN orders o ON oi.order_id = o.id
+       WHERE oi.menu_item_id = $1 AND o.created_at >= $2
+       LIMIT 1`,
+      [id, sevenDaysAgo]
     );
 
     if (orderCheck.rows.length > 0) {
       return reply.status(400).send({
-        message: 'Нельзя удалить блюдо, так как оно используется в заказах.'
+        message: 'Нельзя удалить блюдо, так как оно используется в недавних заказах (младше 7 дней). Старые заказы автоматически очищаются.'
       });
     }
 

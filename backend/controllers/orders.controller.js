@@ -1,4 +1,5 @@
 import pool from '../db.js';
+import { cleanupOldOrders } from '../utils/cleanupOrders.js';
 
 //  заказы
 export const getAllOrders = async (request, reply) => {
@@ -275,4 +276,27 @@ export const streamOrders = async (request, reply) => {
     connectedClients = connectedClients.filter(c => c.id !== clientId);
     console.log(`Client ${clientId} disconnected. Active clients: ${connectedClients.length}`);
   });
+};
+
+// Ручная очистка старых заказов (для администратора)
+export const manualCleanupOrders = async (request, reply) => {
+  try {
+    const daysOld = parseInt(request.query.days) || 7;
+    
+    if (daysOld < 1) {
+      return reply.status(400).send({ message: 'Количество дней должно быть больше 0' });
+    }
+
+    const result = await cleanupOldOrders(daysOld);
+    
+    return reply.send({
+      message: `Очистка завершена успешно`,
+      deletedOrders: result.deletedOrders,
+      deletedItems: result.deletedItems,
+      daysOld
+    });
+  } catch (err) {
+    console.error('Ошибка при ручной очистке заказов:', err);
+    return reply.status(500).send({ message: 'Ошибка при очистке заказов' });
+  }
 };

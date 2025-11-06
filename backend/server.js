@@ -2,7 +2,9 @@ import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cron from 'node-cron';
 import { createDefaultAdmin } from './utils/initAdmin.js';
+import { cleanupOldOrders } from './utils/cleanupOrders.js';
 // Роуты
 import menuRoutes from './routes/menu.route.js';
 import ordersRoutes from './routes/orders.route.js';
@@ -18,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const fastify = Fastify({
-  logger: true
+  logger: false
 });
 
 await fastify.register(import('@fastify/cors'), {
@@ -56,6 +58,22 @@ fastify.setNotFoundHandler((request, reply) => {
 
 // Создаем админа по умолчанию
 createDefaultAdmin();
+
+// Запускается каждый день в 3:00 ночи и проверяет заказы старше 7 дней
+cron.schedule('0 3 * * *', async () => {
+  console.log('[Cron] Запуск автоматической очистки старых заказов...');
+  try {
+    const result = await cleanupOldOrders(7);
+    console.log(`[Cron] Очистка завершена: удалено ${result.deletedOrders} заказов`);
+  } catch (error) {
+    console.error('[Cron] Ошибка при автоматической очистке:', error);
+  }
+}, {
+  scheduled: true,
+  timezone: "Europe/Moscow"
+});
+
+console.log('[Server] Автоматическая очистка заказов настроена (каждый день в 3:00, удаляет заказы старше 7 дней)');
 
 // Запусксервер
 const start = async () => {

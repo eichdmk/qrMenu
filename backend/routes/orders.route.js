@@ -3,7 +3,8 @@ import {
   getAllOrders,
   createOrder,
   updateOrderStatus,
-  streamOrders
+  streamOrders,
+  manualCleanupOrders
 } from '../controllers/orders.controller.js';
 
 export default async function ordersRoutes(fastify, options) {
@@ -18,4 +19,7 @@ export default async function ordersRoutes(fastify, options) {
 
   // SSE endpoint для уведомлений о новых заказах
   fastify.get('/stream', streamOrders);
+
+  // Ручная очистка старых заказов — админ
+  fastify.post('/cleanup', { preHandler: [authenticateToken, isAdmin] }, manualCleanupOrders);
 }
