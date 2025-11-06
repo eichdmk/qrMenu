@@ -50,13 +50,11 @@ function MenuManager() {
     setLoading(true);
 
     try {
-      // Преобразуем categoryId в category_id для API
       let data = {
         ...formData,
         category_id: formData.categoryId ? parseInt(formData.categoryId, 10) : null,
       };
       
-      // Удаляем categoryId, чтобы не отправлять его
       delete data.categoryId;
 
       if (imageFile) {
@@ -87,7 +85,6 @@ function MenuManager() {
       await deleteMenuItem(id);
       toast.success("Блюдо удалено");
     } catch (error) {
-      // Показываем конкретное сообщение об ошибке с сервера
       const errorMessage = error.response?.data?.message || error.message || "Ошибка при удалении";
       toast.error(errorMessage);
     }

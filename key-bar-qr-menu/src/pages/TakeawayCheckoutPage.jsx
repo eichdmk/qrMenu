@@ -58,7 +58,6 @@ function TakeawayCheckoutPage() {
       setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
       clearCart();
-      // Полная очистка sessionStorage после оформления заказа
       sessionStorage.clear();
       toast.success("Заказ на самовывоз оформлен!");
     } catch (error) {

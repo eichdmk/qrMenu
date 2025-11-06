@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "./LoginPage.module.css";
 
-// SVG-иконки
 const EyeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -30,7 +29,6 @@ function LoginPage() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Если пользователь уже авторизован, перенаправляем на админ-панель
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
       navigate("/admin");
@@ -62,13 +60,12 @@ function LoginPage() {
     setShowPassword((prev) => !prev);
   };
 
-  // Показываем загрузку, пока проверяется авторизация
   if (authLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.formWrapper}>
           <div className={styles.header}>
-            <h1>🔐 Вход в систему</h1>
+            <h1>Вход в систему</h1>
             <p>Проверка авторизации...</p>
           </div>
         </div>
@@ -80,7 +77,7 @@ function LoginPage() {
     <div className={styles.container}>
       <div className={styles.formWrapper}>
         <div className={styles.header}>
-          <h1>🔐 Вход в систему</h1>
+          <h1>Вход в систему</h1>
           <p>Войдите в свой аккаунт Key Bar</p>
         </div>
 

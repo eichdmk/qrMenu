@@ -22,9 +22,8 @@ function ReservationPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const navigate = useNavigate();
 
-  // Предопределенные слоты времени: каждые 15 минут с 10:00 до 23:00
   const timeSlots = Array.from({ length: (23 - 10) * 4 + 1 }, (_, index) => {
-    const minutesFromStart = index * 15; // 15-минутные шаги
+    const minutesFromStart = index * 15; 
     const hour = 10 + Math.floor(minutesFromStart / 60);
     const minute = minutesFromStart % 60;
     const hh = String(hour).padStart(2, "0");
@@ -32,7 +31,6 @@ function ReservationPage() {
     return `${hh}:${mm}`;
   });
 
-  // Скроллим наверх при загрузке страницы
   useScrollToTop();
 
   useEffect(() => {
@@ -47,7 +45,6 @@ function ReservationPage() {
     fetchTables();
   }, []);
 
-  // Обновляем доступность столиков при изменении даты или времени
   useEffect(() => {
     const updateTablesAvailability = async () => {
       if (formData.date && formData.time) {
@@ -80,12 +77,10 @@ function ReservationPage() {
       return;
     }
 
-    // Создаём дату в локальном часовом поясе с явным указанием смещения
     const startDate = new Date(`${date}T${time}:00`);
     const endDate = new Date(startDate);
     endDate.setHours(endDate.getHours() + 2);
     
-    // Форматируем с явным указанием локального часового пояса
     const formatLocalISO = (date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -94,8 +89,7 @@ function ReservationPage() {
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
       
-      // Получаем смещение часового пояса в формате ±HH:MM
-      const timezoneOffset = -date.getTimezoneOffset(); // Инвертируем, так как getTimezoneOffset возвращает обратное смещение
+      const timezoneOffset = -date.getTimezoneOffset(); 
       const offsetHours = String(Math.floor(Math.abs(timezoneOffset) / 60)).padStart(2, '0');
       const offsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(2, '0');
       const offsetSign = timezoneOffset >= 0 ? '+' : '-';

@@ -134,7 +134,6 @@ function TakeawayPage() {
             </div>
           ))}
           
-          {/* Sentinel element for infinite scroll */}
           <div ref={observerTarget} style={{ height: '20px' }}></div>
           
           {loadingMore && (

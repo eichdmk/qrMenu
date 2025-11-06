@@ -17,12 +17,10 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Создаем экземпляр Fastify
 const fastify = Fastify({
   logger: true
 });
 
-// Регистрируем плагины
 await fastify.register(import('@fastify/cors'), {
   origin: true
 });
@@ -38,7 +36,6 @@ await fastify.register(import('@fastify/multipart'), {
   }
 });
 
-// Регистрируем роуты
 await fastify.register(authRoutes, { prefix: '/api/auth' });
 await fastify.register(menuRoutes, { prefix: '/api/menu' });
 await fastify.register(ordersRoutes, { prefix: '/api/orders' });
@@ -60,7 +57,7 @@ fastify.setNotFoundHandler((request, reply) => {
 // Создаем админа по умолчанию
 createDefaultAdmin();
 
-// Запускаем сервер
+// Запусксервер
 const start = async () => {
   try {
     const PORT = process.env.PORT || 3000;

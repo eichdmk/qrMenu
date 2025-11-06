@@ -1,13 +1,11 @@
 import pool from '../db.js';
 
-// Получить все заказы — админ (оптимизировано: N+1 исправлено) с пагинацией
+//  заказы
 export const getAllOrders = async (request, reply) => {
   try {
-    // Получаем параметры пагинации из query string
     const limit = parseInt(request.query.limit) || 12;
     const offset = parseInt(request.query.offset) || 0;
 
-    // Получаем заказы с позициями с учетом пагинации
     const result = await pool.query(
       `SELECT 
         o.id, o.table_id, o.reservation_id, o.order_type, o.customer_name, 
@@ -31,11 +29,9 @@ export const getAllOrders = async (request, reply) => {
       [limit, offset]
     );
 
-    // Также получаем общее количество заказов
     const countResult = await pool.query('SELECT COUNT(*) as total FROM orders');
     const total = parseInt(countResult.rows[0].total);
 
-    // Группируем позиции по заказам
     const ordersMap = new Map();
     
     result.rows.forEach(row => {
@@ -59,7 +55,6 @@ export const getAllOrders = async (request, reply) => {
         });
       }
 
-      // Добавляем позицию, если есть
       if (row.item_id) {
         ordersMap.get(orderId).items.push({
           id: row.item_id,
@@ -74,7 +69,6 @@ export const getAllOrders = async (request, reply) => {
 
     const orders = Array.from(ordersMap.values());
     
-    // Возвращаем данные с метаинформацией о пагинации
     return reply.send({
       orders,
       pagination: {
@@ -90,7 +84,6 @@ export const getAllOrders = async (request, reply) => {
   }
 };
 
-// Создать заказ (клиент)
 export const createOrder = async (request, reply) => {
   try {
     const { table_id, reservation_id, order_type, customer_name, customer_phone, comment, items } = request.body;
@@ -99,13 +92,11 @@ export const createOrder = async (request, reply) => {
       return reply.status(400).send({ message: 'Необходимо указать позиции заказа' });
     }
 
-    // Считаем общую сумму
     let total_amount = 0;
     for (const item of items) {
       total_amount += item.unit_price * item.quantity;
     }
 
-    // Создаем заказ
     const orderResult = await pool.query(
       `INSERT INTO orders (table_id, reservation_id, order_type, customer_name, customer_phone, comment, total_amount)
        VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
@@ -114,7 +105,6 @@ export const createOrder = async (request, reply) => {
 
     const order = orderResult.rows[0];
 
-    // Добавляем позиции заказа
     const insertPromises = items.map(item =>
       pool.query(
         `INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price, item_comment)
@@ -136,7 +126,6 @@ export const updateOrderStatus = async (request, reply) => {
     const { id } = request.params;
     const { status } = request.body;
 
-    // Если статус меняется на 'completed', устанавливаем время завершения
     if (status === 'completed') {
       await pool.query(
         `UPDATE orders SET status = $1, completed_at = NOW() WHERE id = $2`,
@@ -183,19 +172,16 @@ export const updateOrderStatus = async (request, reply) => {
   }
 };
 
-// SSE endpoint для уведомлений о новых заказах
 let connectedClients = [];
 let latestOrderId = null;
 
 export const streamOrders = async (request, reply) => {
-  // Настройка SSE
   reply.raw.setHeader('Content-Type', 'text/event-stream');
   reply.raw.setHeader('Cache-Control', 'no-cache');
   reply.raw.setHeader('Connection', 'keep-alive');
   reply.raw.setHeader('Access-Control-Allow-Origin', '*');
   reply.raw.setHeader('Access-Control-Allow-Headers', 'Cache-Control');
 
-  // Получаем последний заказ при подключении
   try {
     const lastOrderResult = await pool.query(
       'SELECT id FROM orders ORDER BY created_at DESC LIMIT 1'
@@ -207,15 +193,12 @@ export const streamOrders = async (request, reply) => {
     console.error('Error getting last order:', err);
   }
 
-  // Добавляем клиента
   const clientId = Date.now();
   const client = { id: clientId, response: reply.raw };
   connectedClients.push(client);
 
-  // Отправляем начальное сообщение
   reply.raw.write(`data: ${JSON.stringify({ type: 'connected', clientId })}\n\n`);
 
-  // Проверяем новые заказы каждые 1 секунду для более быстрого отклика
   const checkInterval = setInterval(async () => {
     try {
       const result = await pool.query(
@@ -231,7 +214,6 @@ export const streamOrders = async (request, reply) => {
         const newOrders = result.rows;
         latestOrderId = newOrders[0].id;
 
-        // Оптимизируем запросы - получаем все позиции одним запросом
         const orderIds = newOrders.map(o => o.id);
         const allItemsResult = await pool.query(
           `SELECT oi.order_id, oi.id, oi.quantity, oi.unit_price, oi.item_comment,
@@ -243,7 +225,6 @@ export const streamOrders = async (request, reply) => {
           [orderIds]
         );
 
-        // Группируем позиции по заказам
         const itemsByOrder = new Map();
         allItemsResult.rows.forEach(item => {
           if (!itemsByOrder.has(item.order_id)) {
@@ -259,19 +240,16 @@ export const streamOrders = async (request, reply) => {
           });
         });
 
-        // Создаем заказы с позициями
         const ordersWithItems = newOrders.map(order => ({
           ...order,
           items: itemsByOrder.get(order.id) || []
         }));
 
-        // Отправляем уведомление всем подключенным клиентам
         const message = `data: ${JSON.stringify({ 
           type: 'new_order', 
           orders: ordersWithItems 
         })}\n\n`;
 
-        // Удаляем отключенных клиентов перед отправкой
         connectedClients = connectedClients.filter(client => {
           try {
             client.response.write(message);
@@ -284,9 +262,8 @@ export const streamOrders = async (request, reply) => {
     } catch (err) {
       console.error('Error checking new orders:', err);
     }
-  }, 1000); // Проверяем каждую секунду для более быстрого отклика
+  }, 1000);
 
-  // Обработка отключения клиента
   request.raw.on('close', () => {
     clearInterval(checkInterval);
     connectedClients = connectedClients.filter(c => c.id !== clientId);

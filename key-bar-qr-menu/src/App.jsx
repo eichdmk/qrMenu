@@ -19,7 +19,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
-// Lazy loading для admin-страниц
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const MenuAdminPage = lazy(() => import("./pages/admin/MenuAdminPage"));
 const CategoriesAdminPage = lazy(() => import("./pages/admin/CategoriesAdminPage"));

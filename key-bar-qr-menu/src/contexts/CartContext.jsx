@@ -13,7 +13,6 @@ export const useCart = () => {
   return context;
 };
 
-// Функция для загрузки корзины из sessionStorage
 const loadCartFromStorage = () => {
   try {
     const savedCart = sessionStorage.getItem(CART_STORAGE_KEY);
@@ -26,7 +25,6 @@ const loadCartFromStorage = () => {
   return [];
 };
 
-// Функция для сохранения корзины в sessionStorage
 const saveCartToStorage = (items) => {
   try {
     sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
@@ -39,7 +37,6 @@ export const CartProvider = ({ children }) => {
   const [items, setItems] = useState(loadCartFromStorage);
   const toastShownRef = useRef(new Set());
   
-  // Автоматическое сохранение корзины при изменении
   useEffect(() => {
     saveCartToStorage(items);
   }, [items]);
@@ -50,11 +47,9 @@ export const CartProvider = ({ children }) => {
     setItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.id === item.id);
       
-      // Показываем toast только если его еще не показывали
       if (!toastShownRef.current.has(toastKey)) {
         toastShownRef.current.add(toastKey);
         
-        // Очищаем старые ключи через 3 секунды
         setTimeout(() => {
           toastShownRef.current.delete(toastKey);
         }, 3000);

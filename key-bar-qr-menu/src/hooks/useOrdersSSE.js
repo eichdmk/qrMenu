@@ -2,10 +2,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { ordersAPI } from '../api/orders';
 import { toast } from 'react-toastify';
 
-// Функция для воспроизведения звукового уведомления
 const playNotificationSound = () => {
   try {
-    // Используем Web Audio API
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     
     if (!window.notificationAudioContext) {
@@ -14,7 +12,6 @@ const playNotificationSound = () => {
 
     const audioContext = window.notificationAudioContext;
 
-    // Активируем контекст (разблокируем автовоспроизведение)
     audioContext.resume().then(() => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
@@ -31,7 +28,7 @@ const playNotificationSound = () => {
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.3);
 
-      // Второй звук
+     
       setTimeout(() => {
         const oscillator2 = audioContext.createOscillator();
         const gainNode2 = audioContext.createGain();
@@ -67,7 +64,6 @@ export const useOrdersSSE = () => {
 
   const LIMIT = 12;
 
-  // Получение заказов при инициализации с пагинацией
   const fetchOrders = useCallback(async (reset = false, currentOffset = 0) => {
     try {
       if (reset) {
@@ -95,17 +91,14 @@ export const useOrdersSSE = () => {
     }
   }, []);
 
-  // Функция для загрузки следующих страниц
   const loadMore = useCallback(async () => {
     if (!hasMore || loading) return;
     await fetchOrders(false, offset);
   }, [hasMore, loading, fetchOrders, offset]);
 
-  // Подключение к SSE для получения уведомлений в реальном времени
   const connectToSSE = () => {
     try {
-      // Получаем базовый URL из API
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://89.111.169.156:3000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const eventSource = new EventSource(`${apiUrl}/api/orders/stream`);
       
       eventSource.onopen = () => {
@@ -120,7 +113,6 @@ export const useOrdersSSE = () => {
           if (data.type === 'connected') {
             console.log('Connected to orders stream:', data.clientId);
           } else if (data.type === 'new_order' && data.orders) {
-            // Фильтруем только реально новые заказы
             const newOrders = data.orders.filter(order => 
               !latestOrderIdsRef.current.has(order.id)
             );
@@ -128,20 +120,16 @@ export const useOrdersSSE = () => {
             if (newOrders.length > 0) {
               console.log('New orders received:', newOrders.length);
               
-              // Проигрываем звуковое уведомление только если есть новые заказы
               playNotificationSound();
               
-              // Обновляем Set с новыми ID
               newOrders.forEach(order => latestOrderIdsRef.current.add(order.id));
               
-              // Добавляем новые заказы в начало списка
               setOrders(prevOrders => {
                 const newOrderIds = new Set(newOrders.map(o => o.id));
                 const filteredPrev = prevOrders.filter(o => !newOrderIds.has(o.id));
                 return [...newOrders, ...filteredPrev];
               });
 
-              // Показываем ОДНО уведомление для всех новых заказов
               if (newOrders.length === 1) {
                 toast.success(`Новый заказ #${newOrders[0].id}!`, {
                   position: 'top-right',
@@ -172,12 +160,10 @@ export const useOrdersSSE = () => {
         console.error('SSE error:', error);
         setIsConnected(false);
         
-        // Очищаем предыдущий таймер переподключения
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
         }
         
-        // Закрываем соединение
         if (eventSourceRef.current) {
           eventSourceRef.current.close();
           eventSourceRef.current = null;

@@ -31,10 +31,8 @@ function QRTablePage() {
 
   const loading = tableLoading || menuLoading;
 
-  // Скроллим наверх при загрузке страницы
   useScrollToTop();
   
-  // Скроллим наверх при смене категории
   useScrollToTopOnChange(activeCategory);
 
   useEffect(() => {
@@ -59,7 +57,7 @@ function QRTablePage() {
       const orderData = {
         tableId: table.id,
         orderType: 'dine_in',
-        comment: comment, // Добавляем комментарий к заказу
+        comment: comment, 
         items: items.map(item => ({
           id: item.id,
           quantity: item.quantity,
@@ -71,7 +69,6 @@ function QRTablePage() {
       const response = await createOrder(orderData);
       setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
-      // Очищаем корзину и sessionStorage после оформления заказа
       clearCart();
       sessionStorage.clear();
       toast.success("Заказ принят!");
@@ -123,7 +120,6 @@ function QRTablePage() {
           </div>
           <p className={styles.successText}>Официант скоро подойдет к вашему столику</p>
           <div className={styles.tableInfo}>
-            <div className={styles.infoIcon}>🪑</div>
             <div className={styles.infoContent}>
               <span className={styles.infoLabel}>Столик</span>
               <span className={styles.infoValue}>№{table.name}</span>

@@ -1,6 +1,6 @@
 import pool from '../db.js';
 
-// Получить все брони (только админ)
+// брони 
 export const getAllReservations = async (request, reply) => {
   try {
     const result = await pool.query(
@@ -17,7 +17,6 @@ export const getAllReservations = async (request, reply) => {
   }
 };
 
-// Создать новую бронь (клиент)
 export const createReservation = async (request, reply) => {
   try {
     const { table_id, customer_name, customer_phone, start_at, end_at } = request.body;
@@ -31,7 +30,6 @@ export const createReservation = async (request, reply) => {
       return reply.status(404).send({ message: 'Столик не найден' });
     }
 
-    // Проверяем конфликты с другими бронированиями на выбранное время
     const reservationConflicts = await pool.query(
       `SELECT COUNT(*) AS conflict_count
        FROM reservations
@@ -45,8 +43,7 @@ export const createReservation = async (request, reply) => {
       return reply.status(400).send({ message: 'Столик уже забронирован в это время' });
     }
 
-    // Проверяем активные заказы, которые могут пересекаться с временем бронирования
-    // Правило: между созданием активного заказа и бронированием должно пройти минимум 2 часа
+
     const reservationDate = new Date(start_at);
     const twoHoursBeforeStart = new Date(reservationDate.getTime() - 2 * 60 * 60 * 1000);
     
@@ -121,7 +118,6 @@ export const updateReservation = async (request, reply) => {
       return reply.status(404).send({ message: 'Бронь не найдена' });
     }
 
-    // Проверяем конфликты с другими бронированиями на выбранное время
     const reservationConflicts = await pool.query(
       `SELECT COUNT(*) AS conflict_count
        FROM reservations
@@ -136,8 +132,7 @@ export const updateReservation = async (request, reply) => {
       return reply.status(400).send({ message: 'Столик уже забронирован в это время' });
     }
 
-    // Проверяем активные заказы, которые могут пересекаться с временем бронирования
-    // Правило: между созданием активного заказа и бронированием должно пройти минимум 2 часа
+
     const reservationDate = new Date(start_at);
     const twoHoursBeforeStart = new Date(reservationDate.getTime() - 2 * 60 * 60 * 1000);
     

@@ -39,9 +39,8 @@ function DeliveryCheckoutPage() {
 
   const DADATA_API_KEY = import.meta.env.VITE_DADATA_API_KEY;
 
-  const DELIVERY_FEE = 200; // фиксированная стоимость доставки
+  const DELIVERY_FEE = 200; 
 
-  // Скроллим наверх при загрузке страницы
   useScrollToTop();
 
   const handleCustomerInfoChange = (e) => {
@@ -70,7 +69,6 @@ function DeliveryCheckoutPage() {
     setComment(e.target.value);
   };
 
-  // Автоподстановка улицы через DaData (по желанию, если ключ задан)
   useEffect(() => {
     if (!DADATA_API_KEY) return;
     const query = (address.street || '').trim();
@@ -135,7 +133,6 @@ function DeliveryCheckoutPage() {
     return () => document.removeEventListener('mousedown', onClickOutside);
   }, []);
 
-  // Подсказки по одному полю (улица + дом) — house level
   useEffect(() => {
     if (!DADATA_API_KEY) return;
     const query = (addressLine || '').trim();
@@ -193,7 +190,6 @@ function DeliveryCheckoutPage() {
     }, 0);
   };
 
-  // Подсказки по номеру дома (ограничиваемся выбранной улицей в регионе)
   useEffect(() => {
     if (!DADATA_API_KEY) return;
     const street = (address.street || '').trim();
@@ -305,7 +301,6 @@ function DeliveryCheckoutPage() {
       setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
       clearCart();
-      // Полная очистка sessionStorage после оформления заказа
       sessionStorage.clear();
       toast.success("Заказ на доставку оформлен!");
     } catch (error) {
@@ -455,7 +450,7 @@ function DeliveryCheckoutPage() {
                   )}
                   {addressLineSuggestions.map((s, idx) => (
                     <button key={idx} type="button" onClick={() => handleSelectAddressLine(s)} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', border: 'none', background: 'transparent', cursor: 'pointer' }}>
-                      <div style={{ fontWeight: 600 }}>{s.value}</div>
+                      <div style={{ fontWeight: 600, color: "black" }}>{s.value}</div>
                     </button>
                   ))}
                 </div>

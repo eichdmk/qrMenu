@@ -16,7 +16,7 @@ export const createTable = async (request, reply) => {
 };
 
 
-// Получить все столики с информацией о доступности (для бронирования)
+// Получить все столики с информацией 
 export const getTablesWithAvailability = async (request, reply) => {
   try {
     const result = await pool.query(
@@ -48,7 +48,6 @@ export const getTablesWithAvailability = async (request, reply) => {
   }
 };
 
-// Получить доступность столиков на конкретную дату и время
 export const getTablesAvailabilityForDateTime = async (request, reply) => {
   try {
     const { date, time } = request.query;
@@ -199,7 +198,7 @@ export const deleteTable = async (request, reply) => {
   }
 };
 
-// Обновить статус столика (занят/свободен) — только админ
+// Обновить статус столика 
 export const updateTableStatus = async (request, reply) => {
   try {
     const { id } = request.params;

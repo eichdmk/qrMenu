@@ -1,6 +1,6 @@
 import api from './index';
 
-// 🧾 ORDERS (заказы)
+//  ORDERS (заказы)
 export const ordersAPI = {
   getAll: (limit = 12, offset = 0) => api.get("/orders", { params: { limit, offset } }),
   create: (data) => api.post("/orders", data),

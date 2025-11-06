@@ -1,6 +1,6 @@
 import api from './index';
 
-// 🪑 TABLES (столики)
+// TABLES (столики)
 export const tablesAPI = {
   getAll: () => api.get("/tables"),
   getWithAvailability: () => api.get("/tables/availability"),

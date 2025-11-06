@@ -4,18 +4,15 @@ import react from "@vitejs/plugin-react"
 export default defineConfig({
   plugins: [react()],
   
-  // Оптимизация производительности
   build: {
-    // Минификация и оптимизация
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Удаляем console.log в production
+        drop_console: true, 
         drop_debugger: true,
       },
     },
     
-    // Code splitting - разбиваем на чанки
     rollupOptions: {
       output: {
         manualChunks: {
@@ -25,14 +22,11 @@ export default defineConfig({
       },
     },
     
-    // Оптимизация размера bundle
     chunkSizeWarningLimit: 1000,
     
-    // Source maps для production (можно отключить для производительности)
     sourcemap: false,
   },
   
-  // Оптимизация зависимостей
   optimizeDeps: {
     include: [
       'react',
@@ -43,9 +37,7 @@ export default defineConfig({
     ],
   },
   
-  // Настройки сервера для dev
   server: {
-    // Горячая перезагрузка
     hmr: true,
   },
 })

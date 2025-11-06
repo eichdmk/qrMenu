@@ -1,6 +1,6 @@
 import api from './index';
 
-// 🏷️ CATEGORIES (категории меню)
+// CATEGORIES (категории меню)
 export const categoriesAPI = {
   getAll: () => api.get("/categories"),
   create: (data) => api.post("/categories", data),

@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Middleware для проверки JWT токена
 export const authenticateToken = async (request, reply) => {
   try {
     const authHeader = request.headers.authorization;

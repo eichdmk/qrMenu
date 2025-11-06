@@ -16,14 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Функция для принудительного выхода при истечении токена
   const forceLogout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    // Перенаправляем на страницу входа
-    // Используем window.location.href для полного обновления страницы,
-    // что гарантирует очистку всех состояний React
     window.location.href = "/login";
   }, []);
 
@@ -34,13 +30,9 @@ export const AuthProvider = ({ children }) => {
       
       if (token && userData) {
         try {
-          // Проверяем токен на сервере только если он существует
           const response = await authAPI.verify();
-          // Если токен валидный, устанавливаем пользователя из ответа сервера
           setUser(response.data.user);
         } catch (error) {
-          // Если токен истек или невалидный, очищаем хранилище
-          // НЕ перенаправляем на /login, так как пользователь может быть обычным клиентом
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           setUser(null);
@@ -49,7 +41,6 @@ export const AuthProvider = ({ children }) => {
       
       setLoading(false);
       
-      // Регистрируем функцию принудительного выхода для глобального использования
       setGlobalForceLogout(forceLogout);
     };
 

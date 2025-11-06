@@ -20,7 +20,6 @@ const getMenuItemsWithCache = async () => {
     return menuCache.data;
   }
   
-  // Загружаем данные из БД
   const result = await pool.query(
     `SELECT m.id, m.category_id, c.name AS category_name, m.name, m.description, m.price, m.image_url, m.available
      FROM menu_items m
@@ -28,14 +27,12 @@ const getMenuItemsWithCache = async () => {
      ORDER BY m.id DESC`
   );
   
-  // Обновляем кеш
   menuCache.data = result.rows;
   menuCache.timestamp = now;
   
   return result.rows;
 };
 
-// Получить меню с пагинацией
 export const getMenuItemsPaginated = async (request, reply) => {
   try {
     const { page = 1, limit = 20, category_id } = request.query;
@@ -85,7 +82,7 @@ export const getMenuItemsPaginated = async (request, reply) => {
   }
 };
 
-// Получить все блюда (для обратной совместимости)
+// Получить все блюда
 export const getAllMenuItems = async (request, reply) => {
   try {
     const items = await getMenuItemsWithCache();
@@ -96,13 +93,11 @@ export const getAllMenuItems = async (request, reply) => {
   }
 };
 
-// Функция для инвалидации кеша
 export const invalidateMenuCache = () => {
   menuCache.data = null;
   menuCache.timestamp = 0;
 };
 
-// Получить блюдо по ID
 export const getMenuItemById = async (request, reply) => {
   try {
     const { id } = request.params;
@@ -132,10 +127,8 @@ export const createMenuItem = async (request, reply) => {
     let image_url = null;
     let category_id, name, description, price, available;
 
-    // Проверяем, является ли запрос multipart
     const contentType = request.headers['content-type'] || '';
     if (contentType.includes('multipart/form-data')) {
-      // Если это multipart запрос
       const data = await request.file();
       const body = request.body;
       
@@ -153,7 +146,6 @@ export const createMenuItem = async (request, reply) => {
         image_url = `/uploads/${filename}`;
       }
     } else {
-      // Если это обычный JSON запрос
       const body = request.body;
       category_id = body.category_id;
       name = body.name;
@@ -169,7 +161,6 @@ export const createMenuItem = async (request, reply) => {
       [category_id || null, name, description, price, image_url, available ?? true]
     );
 
-    // Инвалидируем кеш
     invalidateMenuCache();
 
     return reply.status(201).send(result.rows[0]);
@@ -179,22 +170,18 @@ export const createMenuItem = async (request, reply) => {
   }
 };
 
-// Обновить блюдо
 export const updateMenuItem = async (request, reply) => {
   try {
     const { id } = request.params;
     
-    // Получаем текущее блюдо
     const current = await pool.query(`SELECT * FROM menu_items WHERE id=$1`, [id]);
     if (current.rows.length === 0) return reply.status(404).send({ message: 'Блюдо не найдено' });
 
     let image_url = current.rows[0].image_url;
     let category_id, name, description, price, available;
 
-    // Проверяем, является ли запрос multipart
     const contentType = request.headers['content-type'] || '';
     if (contentType.includes('multipart/form-data')) {
-      // Если это multipart запрос
       const data = await request.file();
       const body = request.body;
       
@@ -204,9 +191,7 @@ export const updateMenuItem = async (request, reply) => {
       price = body.price;
       available = body.available;
 
-      // Если загружен новый файл, заменяем
       if (data) {
-        // Удаляем старое изображение
         if (image_url) {
           const oldPath = path.join(__dirname, '../', image_url);
           if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
@@ -218,7 +203,6 @@ export const updateMenuItem = async (request, reply) => {
         image_url = `/uploads/${filename}`;
       }
     } else {
-      // Если это обычный JSON запрос
       const body = request.body;
       category_id = body.category_id;
       name = body.name;
@@ -226,7 +210,6 @@ export const updateMenuItem = async (request, reply) => {
       price = body.price;
       available = body.available;
       
-      // Если передано новое изображение в JSON, используем его
       if (body.image_url !== undefined) {
         image_url = body.image_url;
       }
@@ -238,7 +221,6 @@ export const updateMenuItem = async (request, reply) => {
       [category_id || null, name, description, price, image_url, available ?? true, id]
     );
 
-    // Инвалидируем кеш
     invalidateMenuCache();
 
     return reply.send(result.rows[0]);
@@ -249,12 +231,10 @@ export const updateMenuItem = async (request, reply) => {
 };
 
 // Удалить блюдо
-// Удалить блюдо
 export const deleteMenuItem = async (request, reply) => {
   try {
     const { id } = request.params;
 
-    // Проверяем, есть ли заказы с этим блюдом
     const orderCheck = await pool.query(
       'SELECT 1 FROM order_items WHERE menu_item_id = $1 LIMIT 1',
       [id]
@@ -266,13 +246,11 @@ export const deleteMenuItem = async (request, reply) => {
       });
     }
 
-    // Получаем текущее блюдо
     const current = await pool.query(`SELECT * FROM menu_items WHERE id=$1`, [id]);
     if (current.rows.length === 0) {
       return reply.status(404).send({ message: 'Блюдо не найдено' });
     }
 
-    // Удаляем изображение, если есть
     const image_url = current.rows[0].image_url;
     if (image_url) {
       const imgPath = path.join(__dirname, '../', image_url);

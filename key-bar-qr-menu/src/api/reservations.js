@@ -1,6 +1,6 @@
 import api from './index';
 
-// 📅 RESERVATIONS (бронирования)
+// RESERVATIONS (бронирования)
 export const reservationsAPI = {
   getAll: () => api.get("/reservations"),
   getById: (id) => api.get(`/reservations/${id}`),

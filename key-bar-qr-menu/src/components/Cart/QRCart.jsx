@@ -11,7 +11,7 @@ function QRCart({ onCheckout, checkoutText = "Отправить заказ", is
   const [comment, setComment] = useState("");
 
   if (items.length === 0) {
-    return null; // Не показываем, если корзина пуста
+    return null; 
   }
 
   const handleCheckout = () => {
@@ -20,7 +20,7 @@ function QRCart({ onCheckout, checkoutText = "Отправить заказ", is
 
   const handleClearCart = () => {
     clearCart();
-    setComment(""); // Очищаем комментарий при очистке корзины
+    setComment(""); 
   };
 
   return (

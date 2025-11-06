@@ -9,21 +9,20 @@ import {
 } from '../controllers/reservations.controller.js';
 
 export default async function reservationsRoutes(fastify, options) {
-  // Получить все брони — админ
+  // Получить все брони  админ
   fastify.get('/', { preHandler: [authenticateToken, isAdmin] }, getAllReservations);
 
-  // Получить бронь по ID — админ
+  // Получить бронь по ID  админ
   fastify.get('/:id', { preHandler: [authenticateToken, isAdmin] }, getReservationById);
 
-  // Создать бронь — клиент (публично)
   fastify.post('/', createReservation);
 
-  // Обновить бронь — админ
+  // Обновить бронь  админ
   fastify.put('/:id', { preHandler: [authenticateToken, isAdmin] }, updateReservation);
 
-  // Обновить только статус брони — админ
+  // Обновить только статус брони  админ
   fastify.patch('/:id/status', { preHandler: [authenticateToken, isAdmin] }, updateReservationStatus);
 
-  // Удалить бронь — админ
+  // Удалить бронь  админ
   fastify.delete('/:id', { preHandler: [authenticateToken, isAdmin] }, deleteReservation);
 }

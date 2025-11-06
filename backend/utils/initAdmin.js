@@ -10,18 +10,16 @@ const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 export const createDefaultAdmin = async () => {
   try {
-    // Проверяем, существует ли уже админ с ролью 'admin'
     const result = await pool.query(
       'SELECT id FROM users WHERE username = $1 AND role = $2',
       [DEFAULT_ADMIN_USERNAME, 'admin']
     );
 
     if (result.rows.length > 0) {
-      console.log('✅ Админ уже существует');
+      console.log('Админ уже существует');
       return;
     }
 
-    // Хешируем пароль
     const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10);
 
     // Создаём админа

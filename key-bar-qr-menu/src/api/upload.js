@@ -1,6 +1,6 @@
 import api from './index';
 
-// 🖼️ UPLOADS (изображения блюд)
+// UPLOADS (изображения блюд)
 export const uploadAPI = {
   uploadImage: async (file) => {
     const formData = new FormData();

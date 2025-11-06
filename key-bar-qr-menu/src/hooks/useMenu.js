@@ -60,7 +60,6 @@ export const useMenu = () => {
     fetchMenu();
   }, [fetchMenu]);
 
-  // Мемоизируем категории для оптимизации
   const categoriesMap = useMemo(() => {
     const map = new Map();
     categories.forEach(cat => map.set(cat.id, cat));

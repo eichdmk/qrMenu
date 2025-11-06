@@ -15,7 +15,6 @@ export const uploadImage = async (request, reply) => {
     const filename = `${Date.now()}-${data.filename}`;
     const filepath = path.join(uploadDir, filename);
     
-    // Преобразуем файл в buffer и записываем
     const buffer = await data.toBuffer();
     await fs.promises.writeFile(filepath, buffer);
 

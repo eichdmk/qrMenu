@@ -8,7 +8,6 @@ function OrderManager() {
   const { orders, loading, updateOrderStatus, isConnected, hasMore, loadMore } = useOrdersSSE();
   const observerRef = useRef(null);
 
-  // Инициализируем аудио контекст при загрузке
   useEffect(() => {
     const initAudio = async () => {
       try {
@@ -17,12 +16,11 @@ function OrderManager() {
           const audioContext = new AudioContext();
           window.notificationAudioContext = audioContext;
           
-          // Делаем короткий беззвучный сигнал для активации контекста
           const oscillator = audioContext.createOscillator();
           const gainNode = audioContext.createGain();
           oscillator.connect(gainNode);
           gainNode.connect(audioContext.destination);
-          oscillator.frequency.value = 0; // Беззвучный
+          oscillator.frequency.value = 0;
           gainNode.gain.setValueAtTime(0, audioContext.currentTime);
           oscillator.start();
           oscillator.stop();
@@ -44,7 +42,6 @@ function OrderManager() {
     }
   };
 
-  // Intersection Observer для бесконечного скролла
   const lastOrderElementRef = useCallback((node) => {
     if (loading) return;
     if (observerRef.current) observerRef.current.disconnect();

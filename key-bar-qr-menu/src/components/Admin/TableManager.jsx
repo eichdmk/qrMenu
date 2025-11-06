@@ -3,6 +3,7 @@ import { tablesAPI } from "../../api/tables";
 import { toast } from "react-toastify";
 import { getStatusText, getStatusColor } from "../../utils/format";
 import styles from "./TableManager.module.css";
+import QRcode from 'qrcode'
 
 function TableManager() {
   const [tables, setTables] = useState([]);
@@ -51,6 +52,25 @@ function TableManager() {
       toast.error("Ошибка при сохранении столика");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateQr = async (token, tableName) => {
+    try {
+      const url = 'https://keybar.ru/table/' + token;
+      const qrcode = await QRcode.toDataURL(url, { width: 500 });
+
+      const link = document.createElement('a');
+      link.href = qrcode;
+      link.download = `qr-code-table-${tableName || token}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("QR-код успешно скачан");
+    } catch (error) {
+      toast.error("Ошибка при генерации QR-кода");
+      console.error(error);
     }
   };
 
@@ -142,6 +162,9 @@ function TableManager() {
                 </button>
                 <button onClick={() => handleDelete(table.id)} className={styles.deleteButton}>
                   🗑️
+                </button>
+                <button onClick={() => handleGenerateQr(table.token, table.name)}>
+                  Сгенерировать QR-код
                 </button>
               </div>
             </div>

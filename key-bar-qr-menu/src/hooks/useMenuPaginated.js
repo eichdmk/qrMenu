@@ -16,7 +16,6 @@ export const useMenuPaginated = (itemsPerPage = 20) => {
   const abortControllerRef = useRef(null);
   const fetchMenuItemsRef = useRef(null);
 
-  // Загружаем категории один раз
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -29,7 +28,6 @@ export const useMenuPaginated = (itemsPerPage = 20) => {
     fetchCategories();
   }, []);
 
-  // Загружаем меню с учетом категории
   const fetchMenuItems = useCallback(async (page = 1, category = "all", reset = true) => {
     try {
       if (reset) {
@@ -39,7 +37,6 @@ export const useMenuPaginated = (itemsPerPage = 20) => {
         setLoadingMore(true);
       }
 
-      // Отменяем предыдущий запрос
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -76,12 +73,10 @@ export const useMenuPaginated = (itemsPerPage = 20) => {
     }
   }, [itemsPerPage]);
 
-  // Сохраняем актуальную версию fetchMenuItems
   useEffect(() => {
     fetchMenuItemsRef.current = fetchMenuItems;
   }, [fetchMenuItems]);
 
-  // Начальная загрузка - загружаем заново когда меняется категория
   useEffect(() => {
     fetchMenuItems(1, activeCategory, true);
     
@@ -90,10 +85,8 @@ export const useMenuPaginated = (itemsPerPage = 20) => {
         abortControllerRef.current.abort();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCategory]); // Только activeCategory, чтобы избежать лишних перезагрузок
+  }, [activeCategory]); 
 
-  // Infinite scroll observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -120,7 +113,7 @@ export const useMenuPaginated = (itemsPerPage = 20) => {
   const handleCategoryChange = useCallback((category) => {
     setActiveCategory(category);
     setCurrentPage(1);
-    setHasMore(true); // Сбрасываем флаг при смене категории
+    setHasMore(true);
   }, []);
 
   return {

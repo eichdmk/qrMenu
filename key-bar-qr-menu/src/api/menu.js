@@ -1,6 +1,6 @@
 import api from './index';
 
-// 🍽️ MENU (меню блюд)
+//  MENU (меню блюд)
 export const menuAPI = {
   getAll: () => api.get("/menu"),
   getPaginated: (params) => api.get("/menu/paginated", { params }),
