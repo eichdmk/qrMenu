@@ -159,6 +159,23 @@
   font-weight: 400;
 }
 
+.legalLinks {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.legalLinks a {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.legalLinks a:hover {
+  color: var(--accent);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .footer {
@@ -181,6 +198,12 @@
   
   .container {
     padding: 40px 15px 25px;
+  }
+
+  .legalLinks {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
   .brandText h3 {

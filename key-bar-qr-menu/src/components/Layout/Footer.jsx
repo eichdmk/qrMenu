@@ -69,6 +69,11 @@ function Footer() {
           <p>&copy; 2025 Key Bar. Все права защищены.</p>
           <p>Сайт разработан
             (<a target="_blank" href="https://t.me/eichdmk">eichdmk</a>)</p>
+          <div className={styles.legalLinks}>
+            <a href="/privacy">Политика конфиденциальности</a>
+            <span>•</span>
+            <a href="/terms">Условия использования</a>
+          </div>
         </div>
       </div>
     </footer>

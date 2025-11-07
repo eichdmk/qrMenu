@@ -517,3 +517,54 @@ textarea::placeholder {
   background: var(--accent);
   color: var(--text-white);
 }
+
+/* ========================================
+   LEGAL PAGES
+   ======================================== */
+
+.legal-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(4px);
+}
+
+.legal-page h1 {
+  margin-bottom: var(--spacing-lg);
+}
+
+.legal-page h2 {
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing);
+}
+
+.legal-page p,
+.legal-page li {
+  color: var(--text-primary);
+}
+
+.legal-page ul,
+.legal-page ol {
+  margin: 0 0 var(--spacing-lg) 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.legal-page section + section {
+  margin-top: var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+  .legal-page {
+    padding: var(--spacing-xl) var(--spacing);
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-page {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+}

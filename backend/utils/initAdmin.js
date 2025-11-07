@@ -5,8 +5,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const DEFAULT_ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const DEFAULT_ADMIN_USERNAME = process.env.ADMIN_USERNAME 
+const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD 
 
 export const createDefaultAdmin = async () => {
   try {

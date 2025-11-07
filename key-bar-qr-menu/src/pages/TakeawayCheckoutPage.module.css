@@ -317,6 +317,22 @@
   animation: spin 1s linear infinite;
 }
 
+.consentNote {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.consentNote a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.consentNote a:hover {
+  color: var(--accent-hover);
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

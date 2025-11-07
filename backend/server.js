@@ -27,6 +27,23 @@ await fastify.register(import('@fastify/cors'), {
   origin: true
 });
 
+await fastify.register(import('@fastify/rate-limit'), {
+  global: true,
+  max: 100,
+  timeWindow: '1 minute',
+  hook: 'onRequest',
+  allowList: (req, key) => req.ip === '127.0.0.1' || req.ip === '::1',
+  errorResponseBuilder: (request, context) => {
+    const retryAfter = Math.round(context.ttl / 1000);
+    return {
+      statusCode: 429,
+      error: 'Too Many Requests',
+      message: 'Превышен лимит запросов. Попробуйте позже.',
+      retryAfter
+    };
+  }
+});
+
 await fastify.register(import('@fastify/static'), {
   root: path.join(__dirname, 'uploads'),
   prefix: '/uploads/'

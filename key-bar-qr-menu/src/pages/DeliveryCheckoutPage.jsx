@@ -529,6 +529,13 @@ function DeliveryCheckoutPage() {
               <div className={styles.charCount}>{comment.length}/500</div>
             </div>
 
+            <p className={styles.consentNote}>
+              Нажимая «Оформить доставку», вы подтверждаете, что ознакомлены и
+              соглашаетесь с <a href="/privacy">Политикой конфиденциальности</a>
+              {" "}
+              и <a href="/terms">Условиями использования</a> Key Bar.
+            </p>
+
             <button className={styles.submitButton} onClick={handleCheckout} disabled={isSubmitting}>
               {isSubmitting ? (<><span className={styles.spinner}></span>Обработка...</>) : (<><span className={styles.buttonIcon}></span>Оформить доставку</>)}
             </button>

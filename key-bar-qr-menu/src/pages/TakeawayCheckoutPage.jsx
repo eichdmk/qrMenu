@@ -226,6 +226,13 @@ function TakeawayCheckoutPage() {
               </div>
             </div>
 
+            <p className={styles.consentNote}>
+              Нажимая «Оформить заказ», вы подтверждаете, что ознакомлены и
+              соглашаетесь с <a href="/privacy">Политикой конфиденциальности</a>
+              {" "}
+              и <a href="/terms">Условиями использования</a> Key Bar.
+            </p>
+
             <button 
               className={styles.submitButton}
               onClick={handleCheckout}

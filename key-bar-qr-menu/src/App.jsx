@@ -14,6 +14,8 @@ import TakeawayCheckoutPage from "./pages/TakeawayCheckoutPage";
 import DeliveryCheckoutPage from "./pages/DeliveryCheckoutPage";
 import ReservationPage from "./pages/ReservationPage";
 import MenuItemPage from "./pages/MenuItemPage";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -52,6 +54,8 @@ function AppRoutes() {
       <Route path="/takeaway/checkout" element={<TakeawayCheckoutPage />} />
       <Route path="/delivery/checkout" element={<DeliveryCheckoutPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="/table/:token" element={<QRTablePage />} />
       <Route 
         path="/admin" 
