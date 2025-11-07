@@ -29,7 +29,11 @@ ENV SERVER_NAME=_ \
     ACME_CHALLENGE_ROOT=/var/www/certbot \
     NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
 
+COPY infra/nginx/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 VOLUME ["/etc/ssl/private", "/etc/letsencrypt", "/var/www/certbot"]
 
 EXPOSE 80 443
 
+ENTRYPOINT ["/docker-entrypoint.sh"]

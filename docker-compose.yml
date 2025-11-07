@@ -45,7 +45,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./infra/certs:/etc/ssl/private:ro
+      - ./infra/certs:/etc/ssl/private
       - letsencrypt:/etc/letsencrypt
       - certbot-www:/var/www/certbot
 
