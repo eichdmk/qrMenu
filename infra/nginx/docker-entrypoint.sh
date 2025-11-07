@@ -32,5 +32,17 @@ fi
 
 chmod 600 "$KEY_PATH"
 
+TEMPLATE_DIR=${NGINX_ENVSUBST_TEMPLATE_DIR:-/etc/nginx/templates}
+TEMPLATE_SUFFIX=${NGINX_ENVSUBST_TEMPLATE_SUFFIX:-.template}
+OUTPUT_DIR=${NGINX_ENVSUBST_OUTPUT_DIR:-/etc/nginx/conf.d}
+
+if [ -d "$TEMPLATE_DIR" ]; then
+  echo "Rendering nginx templates from ${TEMPLATE_DIR} to ${OUTPUT_DIR}" 
+  for template in $(find "$TEMPLATE_DIR" -type f -name "*${TEMPLATE_SUFFIX}"); do
+    filename=$(basename "$template" "$TEMPLATE_SUFFIX")
+    envsubst < "$template" > "${OUTPUT_DIR}/${filename}"
+  done
+fi
+
 exec nginx -g 'daemon off;'
 

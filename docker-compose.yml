@@ -10,6 +10,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-keybar}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -22,8 +27,11 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       NODE_ENV: production
+      DB_MAX_RETRIES: 30
+      DB_RETRY_DELAY_MS: 2000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - backend-uploads:/usr/src/app/uploads
 
@@ -31,6 +39,8 @@ services:
     build:
       context: .
       dockerfile: infra/nginx/Dockerfile
+      args:
+        VITE_API_URL: ${PUBLIC_API_URL:-https://localhost/api}
     restart: unless-stopped
     depends_on:
       - backend

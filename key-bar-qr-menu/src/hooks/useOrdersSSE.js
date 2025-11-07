@@ -98,7 +98,10 @@ export const useOrdersSSE = () => {
 
   const connectToSSE = () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://89.111.169.156:3000';
+      const apiUrl =
+        (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) ||
+        (typeof process !== "undefined" && process.env && process.env.VITE_API_URL) ||
+        "http://localhost:3000";
       const eventSource = new EventSource(`${apiUrl}/api/orders/stream`);
       
       eventSource.onopen = () => {

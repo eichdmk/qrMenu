@@ -47,7 +47,13 @@ ADMIN_PASSWORD=<initial admin password>
 
 ### 3.2 Compose-level
 
-Create a `.env` file in the project root to drive `docker-compose.yml`:
+Copy the sample compose environment file and adjust the values:
+
+```bash
+cp deploy.env.example .env
+```
+
+Update the generated `.env` with your production settings:
 
 ```
 DB_NAME=keybar
@@ -57,9 +63,10 @@ SERVER_NAME=menu.example.com
 LETSENCRYPT_EMAIL=admin@example.com
 SSL_CERT_PATH=/etc/ssl/private/server.crt
 SSL_KEY_PATH=/etc/ssl/private/server.key
+PUBLIC_API_URL=https://menu.example.com/api
 ```
 
-> The `SERVER_NAME` value must match your public DNS record.
+> `SERVER_NAME` must match your public DNS record. `PUBLIC_API_URL` is injected into the frontend build so the React app talks to the correct API endpoint.
 
 ## 4. SSL certificate options
 
@@ -108,6 +115,7 @@ Certificates are stored in the persistent `letsencrypt` volume and private keys 
    ```bash
    docker compose up -d
    ```
+   The backend entrypoint waits for PostgreSQL, runs all SQL migrations from `backend/sql/`, and only then boots Fastify. This means a fresh database is provisioned automatically on first start.
 3. Verify services:
    ```bash
    docker compose ps

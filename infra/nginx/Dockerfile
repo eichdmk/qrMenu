@@ -2,6 +2,9 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+ARG VITE_API_URL="http://localhost:3000/api"
+ENV VITE_API_URL=${VITE_API_URL}
+
 COPY key-bar-qr-menu/package*.json ./
 
 RUN npm ci
@@ -12,7 +15,9 @@ RUN npm run build
 
 FROM nginx:1.27-alpine
 
-RUN apk add --no-cache openssl
+RUN echo "https://mirror.yandex.ru/mirrors/alpine/v3.21/main" > /etc/apk/repositories \
+  && echo "https://mirror.yandex.ru/mirrors/alpine/v3.21/community" >> /etc/apk/repositories \
+  && apk add --no-cache openssl
 
 COPY infra/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
