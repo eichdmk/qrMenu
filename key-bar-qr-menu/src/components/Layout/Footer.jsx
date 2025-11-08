@@ -73,6 +73,8 @@ function Footer() {
             <a href="/privacy">Политика конфиденциальности</a>
             <span>•</span>
             <a href="/terms">Условия использования</a>
+            <span>•</span>
+            <a href="/requisites">Реквизиты</a>
           </div>
         </div>
       </div>

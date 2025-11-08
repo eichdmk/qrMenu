@@ -13,6 +13,8 @@ RUN rm -f /etc/apt/sources.list.d/* \
     python3 \
     libvips \
     curl \
+    ca-certificates \
+  && update-ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production

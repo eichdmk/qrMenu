@@ -21,6 +21,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import PaymentResultPage from "./pages/PaymentResultPage";
+import Requisites from "./pages/Requisites";
 
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const MenuAdminPage = lazy(() => import("./pages/admin/MenuAdminPage"));
@@ -57,6 +58,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
+      <Route path="/requisites" element={<Requisites />} />
       <Route path="/payment/result" element={<PaymentResultPage />} />
       <Route path="/table/:token" element={<QRTablePage />} />
       <Route 
