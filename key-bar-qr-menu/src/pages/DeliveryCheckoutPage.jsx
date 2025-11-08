@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../api/orders";
 import { useCart } from "../contexts/CartContext";
@@ -6,6 +6,7 @@ import { formatPrice } from "../utils/format";
 import { getImageUrl } from "../api/constants";
 import { toast } from "react-toastify";
 import { useScrollToTop } from "../hooks/useScrollToTop";
+import { CashIcon, CardIcon } from "../components/Icons";
 import styles from "./TakeawayCheckoutPage.module.css";
 
 function DeliveryCheckoutPage() {
@@ -23,6 +24,7 @@ function DeliveryCheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderId, setOrderId] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [addressLine, setAddressLine] = useState("");
   const [addressLineSuggestions, setAddressLineSuggestions] = useState([]);
   const [isAddressLoading, setIsAddressLoading] = useState(false);
@@ -284,6 +286,11 @@ function DeliveryCheckoutPage() {
     return parts.join(", ");
   };
 
+  const paymentReturnUrl = useMemo(
+    () => `${window.location.origin}/payment/result`,
+    []
+  );
+
   const handleCheckout = async () => {
     if (!validate()) return;
 
@@ -299,6 +306,14 @@ function DeliveryCheckoutPage() {
         customerName: customerInfo.name,
         customerPhone: customerInfo.phone,
         comment: composedComment,
+        deliveryAddress: buildAddressString(),
+        deliveryFee: DELIVERY_FEE,
+        paymentMethod,
+        paymentReturnUrl,
+        paymentMetadata: {
+          channel: "delivery",
+          customerPhone: customerInfo.phone,
+        },
         items: items.map(item => ({
           id: item.id,
           quantity: item.quantity,
@@ -308,6 +323,24 @@ function DeliveryCheckoutPage() {
       };
 
       const response = await createOrder(orderData);
+
+      if (paymentMethod === "card") {
+        const confirmationUrl = response?.payment?.confirmation_url;
+        const paymentId = response?.payment?.id;
+
+        if (paymentId) {
+          sessionStorage.setItem("kb_recent_payment_id", paymentId);
+        }
+
+        if (confirmationUrl) {
+          toast.info("Перенаправляем на оплату YooKassa...");
+          window.location.href = confirmationUrl;
+          return;
+        }
+        toast.error("Не удалось получить ссылку для оплаты. Попробуйте снова.");
+        return;
+      }
+
       setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
       clearCart();
@@ -535,6 +568,40 @@ function DeliveryCheckoutPage() {
               {" "}
               и <a href="/terms">Условиями использования</a> Key Bar.
             </p>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Способ оплаты *</label>
+              <div className={styles.paymentOptions}>
+                <button
+                  type="button"
+                  className={`${styles.paymentOption} ${paymentMethod === "cash" ? styles.paymentOptionActive : ""}`}
+                  onClick={() => setPaymentMethod("cash")}
+                  disabled={isSubmitting}
+                >
+                  <span className={styles.paymentOptionIcon}>
+                    <CashIcon size={30} />
+                  </span>
+                  <span className={styles.paymentOptionText}>
+                    <span className={styles.paymentOptionTitle}>Наличными</span>
+                    <span className={styles.paymentOptionHint}>Оплата при получении</span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.paymentOption} ${paymentMethod === "card" ? styles.paymentOptionActive : ""}`}
+                  onClick={() => setPaymentMethod("card")}
+                  disabled={isSubmitting}
+                >
+                  <span className={styles.paymentOptionIcon}>
+                    <CardIcon size={30} />
+                  </span>
+                  <span className={styles.paymentOptionText}>
+                    <span className={styles.paymentOptionTitle}>Картой онлайн</span>
+                    <span className={styles.paymentOptionHint}>Оплата через YooKassa</span>
+                  </span>
+                </button>
+              </div>
+            </div>
 
             <button className={styles.submitButton} onClick={handleCheckout} disabled={isSubmitting}>
               {isSubmitting ? (<><span className={styles.spinner}></span>Обработка...</>) : (<><span className={styles.buttonIcon}></span>Оформить доставку</>)}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../api/orders";
 import { useCart } from "../contexts/CartContext";
@@ -6,6 +6,7 @@ import { formatPrice } from "../utils/format";
 import { getImageUrl } from "../api/constants";
 import { toast } from "react-toastify";
 import { useScrollToTop } from "../hooks/useScrollToTop";
+import { CashIcon, CardIcon } from "../components/Icons";
 import styles from "./TakeawayCheckoutPage.module.css";
 
 function TakeawayCheckoutPage() {
@@ -14,6 +15,7 @@ function TakeawayCheckoutPage() {
 
   const [customerInfo, setCustomerInfo] = useState({ name: "", phone: "" });
   const [comment, setComment] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderId, setOrderId] = useState(null);
@@ -28,6 +30,11 @@ function TakeawayCheckoutPage() {
   const handleCommentChange = (e) => {
     setComment(e.target.value);
   };
+
+  const paymentReturnUrl = useMemo(
+    () => `${window.location.origin}/payment/result`,
+    []
+  );
 
   const handleCheckout = async () => {
     if (items.length === 0) {
@@ -46,6 +53,12 @@ function TakeawayCheckoutPage() {
         customerName: customerInfo.name,
         customerPhone: customerInfo.phone,
         comment: comment,
+        paymentMethod,
+        paymentReturnUrl,
+        paymentMetadata: {
+          channel: "takeaway",
+          customerPhone: customerInfo.phone,
+        },
         items: items.map(item => ({
           id: item.id,
           quantity: item.quantity,
@@ -55,6 +68,24 @@ function TakeawayCheckoutPage() {
       };
 
       const response = await createOrder(orderData);
+
+      if (paymentMethod === "card") {
+        const confirmationUrl = response?.payment?.confirmation_url;
+        const paymentId = response?.payment?.id;
+
+        if (paymentId) {
+          sessionStorage.setItem("kb_recent_payment_id", paymentId);
+        }
+
+        if (confirmationUrl) {
+          toast.info("Перенаправляем на оплату YooKassa...");
+          window.location.href = confirmationUrl;
+          return;
+        }
+        toast.error("Не удалось получить ссылку для оплаты. Попробуйте снова.");
+        return;
+      }
+
       setOrderId(response.order_id || response.id);
       setOrderPlaced(true);
       clearCart();
@@ -223,6 +254,40 @@ function TakeawayCheckoutPage() {
               />
               <div className={styles.charCount}>
                 {comment.length}/500
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Способ оплаты *</label>
+              <div className={styles.paymentOptions}>
+                <button
+                  type="button"
+                  className={`${styles.paymentOption} ${paymentMethod === "cash" ? styles.paymentOptionActive : ""}`}
+                  onClick={() => setPaymentMethod("cash")}
+                  disabled={isSubmitting}
+                >
+                  <span className={styles.paymentOptionIcon}>
+                    <CashIcon size={30} />
+                  </span>
+                  <span className={styles.paymentOptionText}>
+                    <span className={styles.paymentOptionTitle}>Наличными</span>
+                    <span className={styles.paymentOptionHint}>Оплата при получении</span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.paymentOption} ${paymentMethod === "card" ? styles.paymentOptionActive : ""}`}
+                  onClick={() => setPaymentMethod("card")}
+                  disabled={isSubmitting}
+                >
+                  <span className={styles.paymentOptionIcon}>
+                    <CardIcon size={30} />
+                  </span>
+                  <span className={styles.paymentOptionText}>
+                    <span className={styles.paymentOptionTitle}>Картой онлайн</span>
+                    <span className={styles.paymentOptionHint}>Оплата через YooKassa</span>
+                  </span>
+                </button>
               </div>
             </div>
 

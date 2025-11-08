@@ -75,6 +75,61 @@
   gap: 0.8rem;
 }
 
+.paymentRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.paymentMethod {
+  font-weight: 600;
+  color: var(--dark-color, #2c3e50);
+}
+
+.paymentBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: 1px solid transparent;
+}
+
+.paymentBadgeUnpaid {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.paymentBadgePending {
+  background: rgba(250, 204, 21, 0.18);
+  color: #b45309;
+  border-color: rgba(250, 204, 21, 0.4);
+}
+
+.paymentBadgeSucceeded {
+  background: rgba(34, 197, 94, 0.18);
+  color: #047857;
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.paymentBadgeCanceled {
+  background: rgba(248, 113, 113, 0.15);
+  color: #b91c1c;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.paymentBadgeRefunded {
+  background: rgba(96, 165, 250, 0.18);
+  color: #1d4ed8;
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
 .detailGroup {
   display: flex;
   flex-direction: column;

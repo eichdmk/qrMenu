@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cron from 'node-cron';
@@ -13,15 +14,30 @@ import reservationsRoutes from './routes/reservations.route.js';
 import uploadRoutes from './routes/uploads.route.js';
 import categoriesRoutes from './routes/categories.route.js';
 import authRoutes from './routes/auth.route.js'; 
+import paymentsRoutes from './routes/payments.route.js';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const fastify = Fastify({
-  logger: false
-});
+const certsDir = path.resolve(__dirname, '../infra/certs');
+const httpsKeyPath = path.join(certsDir, 'localhost+2-key.pem');
+const httpsCertPath = path.join(certsDir, 'localhost+2.pem');
+
+const fastifyOptions = { logger: false };
+
+if (fs.existsSync(httpsKeyPath) && fs.existsSync(httpsCertPath)) {
+  fastifyOptions.https = {
+    key: fs.readFileSync(httpsKeyPath),
+    cert: fs.readFileSync(httpsCertPath),
+  };
+  console.log('[Server] HTTPS режим включён (локальные сертификаты mkcert)');
+} else {
+  console.warn('[Server] HTTPS сертификаты не найдены, сервер стартует в HTTP режиме');
+}
+
+const fastify = Fastify(fastifyOptions);
 
 await fastify.register(import('@fastify/cors'), {
   origin: true
@@ -45,6 +61,7 @@ await fastify.register(tablesRoutes, { prefix: '/api/tables' });
 await fastify.register(reservationsRoutes, { prefix: '/api/reservations' });
 await fastify.register(uploadRoutes, { prefix: '/api/upload' });
 await fastify.register(categoriesRoutes, { prefix: '/api/categories' });
+await fastify.register(paymentsRoutes, { prefix: '/api/payments' });
 
 // Главная страница
 fastify.get('/', async (request, reply) => {

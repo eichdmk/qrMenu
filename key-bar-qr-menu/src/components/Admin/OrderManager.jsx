@@ -4,6 +4,50 @@ import { toast } from "react-toastify";
 import { useEffect, useRef, useCallback } from "react";
 import styles from "./OrderManager.module.css";
 
+const ORDER_TYPE_LABELS = {
+  dine_in: "В зале",
+  takeaway: "Самовывоз",
+  delivery: "Доставка",
+};
+
+const PAYMENT_METHOD_LABELS = {
+  cash: "Наличные",
+  card: "Карта (YooKassa)",
+};
+
+const PAYMENT_STATUS_LABELS = {
+  unpaid: "Не оплачено",
+  pending: "Ожидает оплаты",
+  succeeded: "Оплачено",
+  canceled: "Отменено",
+  refunded: "Возврат",
+};
+
+const getOrderTypeLabel = (orderType) =>
+  ORDER_TYPE_LABELS[orderType] || "Неизвестно";
+
+const getPaymentMethodLabel = (method) =>
+  PAYMENT_METHOD_LABELS[method] || "Не указано";
+
+const getPaymentStatusLabel = (status) =>
+  PAYMENT_STATUS_LABELS[status] || "Неизвестно";
+
+const getPaymentStatusClassName = (status) => {
+  switch (status) {
+    case "succeeded":
+      return styles.paymentBadgeSucceeded;
+    case "pending":
+      return styles.paymentBadgePending;
+    case "canceled":
+      return styles.paymentBadgeCanceled;
+    case "refunded":
+      return styles.paymentBadgeRefunded;
+    case "unpaid":
+    default:
+      return styles.paymentBadgeUnpaid;
+  }
+};
+
 function OrderManager() {
   const { orders, loading, updateOrderStatus, isConnected, hasMore, loadMore } = useOrdersSSE();
   const observerRef = useRef(null);
@@ -84,7 +128,22 @@ function OrderManager() {
       
       {orders.length > 0 ? (
         <div className={styles.ordersList}>
-          {orders.map((order, index) => (
+          {orders.map((order, index) => {
+            const locationLabel = (() => {
+              if (order.order_type === "dine_in") {
+                return order.table_name ? `Столик №${order.table_name}` : "В зале";
+              }
+              if (order.order_type === "delivery") {
+                return "Адресная доставка";
+              }
+              return "Самовывоз";
+            })();
+
+            const paymentBadgeClass = `${styles.paymentBadge} ${getPaymentStatusClassName(
+              order.payment_status
+            )}`;
+
+            return (
             <div 
               key={order.id} 
               className={styles.orderCard}
@@ -100,11 +159,23 @@ function OrderManager() {
                 </span>
               </div>
               <div className={styles.orderDetails}>
-                <p><strong>Столик:</strong> {order.table_name ? `№${order.table_name}` : `Самовывоз`}</p>
-                <p><strong>Тип заказа:</strong> {order.order_type === 'takeaway' ? 'Самовывоз' : 'В зале'}</p>
+                <p><strong>Место:</strong> {locationLabel}</p>
+                <p><strong>Тип заказа:</strong> {getOrderTypeLabel(order.order_type)}</p>
                 <p><strong>Клиент:</strong> {order.customer_name || 'Не указано'}</p>
                 <p><strong>Телефон:</strong> {order.customer_phone || 'Не указано'}</p>
                 <p><strong>Сумма:</strong> {formatPrice(order.total_amount)}</p>
+                <p className={styles.paymentRow}>
+                  <strong>Оплата:</strong>
+                  <span className={styles.paymentMethod}>
+                    {getPaymentMethodLabel(order.payment_method)}
+                  </span>
+                </p>
+                <p className={styles.paymentRow}>
+                  <strong>Статус оплаты:</strong>
+                  <span className={paymentBadgeClass}>
+                    {getPaymentStatusLabel(order.payment_status)}
+                  </span>
+                </p>
                 <p><strong>Дата:</strong> {formatDate(order.created_at)} {formatTime(order.created_at)}</p>
                 
                 {/* Комментарий к заказу */}
@@ -150,7 +221,8 @@ function OrderManager() {
                 </select>
               </div>
             </div>
-          ))}
+            );
+          })}
           {hasMore && (
             <div className={styles.loadingMore}>
               <p>Загрузка...</p>

@@ -333,6 +333,82 @@
   color: var(--accent-hover);
 }
 
+.paymentOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paymentOption {
+  width: 100%;
+  padding: 18px 22px;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 18px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.paymentOption:hover:not(:disabled) {
+  border-color: rgba(15, 118, 110, 0.35);
+  box-shadow: 0 10px 25px rgba(15, 118, 110, 0.12);
+  transform: translateY(-1px);
+}
+
+.paymentOption:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.paymentOptionActive {
+  border-color: rgba(15, 118, 110, 0.6);
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), rgba(209, 250, 229, 0.9));
+  box-shadow: 0 14px 28px rgba(15, 118, 110, 0.2);
+}
+
+.paymentOptionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(15, 118, 110, 0.12);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.paymentOptionIcon svg {
+  width: 70%;
+  height: 70%;
+}
+
+.paymentOption:hover:not(:disabled) .paymentOptionIcon,
+.paymentOptionActive .paymentOptionIcon {
+  background: rgba(15, 118, 110, 0.2);
+  transform: scale(1.02);
+}
+
+.paymentOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paymentOptionTitle {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.paymentOptionHint {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

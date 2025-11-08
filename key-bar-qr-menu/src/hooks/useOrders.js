@@ -27,6 +27,11 @@ export const useOrders = () => {
         customer_name: data.customerName || null,
         customer_phone: data.customerPhone || null,
         comment: data.comment || null,
+        payment_method: data.paymentMethod || 'cash',
+        delivery_address: data.deliveryAddress || null,
+        delivery_fee: data.deliveryFee || 0,
+        payment_return_url: data.paymentReturnUrl,
+        payment_metadata: data.paymentMetadata || {},
         items: data.items.map(item => ({
           menu_item_id: item.id,
           quantity: item.quantity,
@@ -36,7 +41,6 @@ export const useOrders = () => {
       };
       
       const response = await ordersAPI.create(orderData);
-      setOrders((prev) => [response.data, ...prev]);
       return response.data;
     } catch (err) {
       throw err;

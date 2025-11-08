@@ -1,5 +1,9 @@
 import pool from '../db.js';
 import { cleanupOldOrders } from '../utils/cleanupOrders.js';
+import { createYooKassaPayment, isYooKassaConfigured } from '../services/yookassa.js';
+
+const ORDER_TYPES = new Set(['dine_in', 'takeaway', 'delivery']);
+const PAYMENT_METHODS = new Set(['cash', 'card']);
 
 //  заказы
 export const getAllOrders = async (request, reply) => {
@@ -11,6 +15,8 @@ export const getAllOrders = async (request, reply) => {
       `SELECT 
         o.id, o.table_id, o.reservation_id, o.order_type, o.customer_name, 
         o.customer_phone, o.comment, o.status, o.total_amount, o.created_at,
+        o.payment_method, o.payment_status, o.payment_id, o.payment_confirmation_url,
+        o.payment_receipt_url, o.delivery_address, o.delivery_fee, o.payment_metadata,
         t.name AS table_name,
         r.customer_name AS reservation_customer,
         oi.id AS item_id, oi.quantity AS item_quantity, oi.unit_price AS item_unit_price, 
@@ -50,6 +56,14 @@ export const getAllOrders = async (request, reply) => {
           status: row.status,
           total_amount: row.total_amount,
           created_at: row.created_at,
+          payment_method: row.payment_method,
+          payment_status: row.payment_status,
+          payment_id: row.payment_id,
+          payment_confirmation_url: row.payment_confirmation_url,
+          payment_receipt_url: row.payment_receipt_url,
+          delivery_address: row.delivery_address,
+          delivery_fee: row.delivery_fee,
+          payment_metadata: row.payment_metadata,
           table_name: row.table_name,
           reservation_customer: row.reservation_customer,
           items: []
@@ -86,39 +100,220 @@ export const getAllOrders = async (request, reply) => {
 };
 
 export const createOrder = async (request, reply) => {
+  const {
+    table_id,
+    reservation_id,
+    order_type = 'dine_in',
+    customer_name,
+    customer_phone,
+    comment,
+    items,
+    payment_method = 'cash',
+    delivery_address,
+    delivery_fee = 0,
+    payment_return_url,
+    payment_metadata = {}
+  } = request.body ?? {};
+
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return reply.status(400).send({ message: 'Необходимо указать позиции заказа' });
+  }
+
+  if (!ORDER_TYPES.has(order_type)) {
+    return reply.status(400).send({ message: 'Недопустимый тип заказа' });
+  }
+
+  if (!PAYMENT_METHODS.has(payment_method)) {
+    return reply.status(400).send({ message: 'Недопустимый способ оплаты' });
+  }
+
+  const normalizedDeliveryFee = Number.parseFloat(delivery_fee || 0);
+  if (Number.isNaN(normalizedDeliveryFee) || normalizedDeliveryFee < 0) {
+    return reply.status(400).send({ message: 'Некорректная стоимость доставки' });
+  }
+
+  const initialPaymentMetadata =
+    payment_metadata && typeof payment_metadata === 'object'
+      ? payment_metadata
+      : {};
+
+  let normalizedItems;
   try {
-    const { table_id, reservation_id, order_type, customer_name, customer_phone, comment, items } = request.body;
+    normalizedItems = items.map((item) => {
+      const quantity = Number.parseInt(item.quantity, 10);
+      const unitPrice = Number.parseFloat(item.unit_price ?? item.unitPrice ?? item.price);
+      const menuItemId = item.menu_item_id ?? item.menuItemId ?? item.id;
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return reply.status(400).send({ message: 'Необходимо указать позиции заказа' });
-    }
+      if (!menuItemId) {
+        throw new Error('Не указано блюдо для позиции заказа');
+      }
 
-    let total_amount = 0;
-    for (const item of items) {
-      total_amount += item.unit_price * item.quantity;
-    }
+      if (Number.isNaN(quantity) || quantity <= 0) {
+        throw new Error('Некорректное количество для позиции заказа');
+      }
+      if (Number.isNaN(unitPrice) || unitPrice < 0) {
+        throw new Error('Некорректная цена для позиции заказа');
+      }
 
-    const orderResult = await pool.query(
-      `INSERT INTO orders (table_id, reservation_id, order_type, customer_name, customer_phone, comment, total_amount)
-       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-      [table_id || null, reservation_id || null, order_type, customer_name, customer_phone, comment, total_amount]
+      return {
+        menu_item_id: menuItemId,
+        quantity,
+        unit_price: unitPrice,
+        item_comment: item.item_comment ?? item.comment ?? null,
+      };
+    });
+  } catch (validationError) {
+    return reply.status(400).send({
+      message: validationError.message || 'Некорректные данные по позициям заказа',
+    });
+  }
+
+  let totalAmount = normalizedItems.reduce(
+    (sum, item) => sum + item.unit_price * item.quantity,
+    0
+  );
+
+  totalAmount += normalizedDeliveryFee;
+
+  if (payment_method === 'card' && totalAmount <= 0) {
+    return reply.status(400).send({ message: 'Сумма заказа для онлайн-оплаты должна быть больше 0' });
+  }
+
+  const defaultBaseUrl =
+    process.env.YOOKASSA_RETURN_URL?.replace(/\/payment\/result$/, '') ||
+    process.env.APP_BASE_URL ||
+    request.headers?.origin ||
+    (request.headers?.host ? `https://${request.headers.host}` : null);
+
+  const paymentReturnUrl =
+    payment_return_url ||
+    process.env.YOOKASSA_RETURN_URL ||
+    (defaultBaseUrl ? `${defaultBaseUrl.replace(/\/$/, '')}/payment/result` : 'https://example.com/payment/result');
+
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const orderResult = await client.query(
+      `INSERT INTO orders (
+        table_id,
+        reservation_id,
+        order_type,
+        customer_name,
+        customer_phone,
+        comment,
+        total_amount,
+        payment_method,
+        payment_status,
+        delivery_address,
+        delivery_fee,
+        payment_metadata
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      RETURNING *`,
+      [
+        table_id || null,
+        reservation_id || null,
+        order_type,
+        customer_name,
+        customer_phone,
+        comment,
+        totalAmount,
+        payment_method,
+        payment_method === 'card' ? 'pending' : 'succeeded',
+        delivery_address || null,
+        normalizedDeliveryFee,
+        JSON.stringify(initialPaymentMetadata),
+      ]
     );
 
     const order = orderResult.rows[0];
 
-    const insertPromises = items.map(item =>
-      pool.query(
+    for (const item of normalizedItems) {
+      await client.query(
         `INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price, item_comment)
          VALUES ($1,$2,$3,$4,$5)`,
-        [order.id, item.menu_item_id, item.quantity, item.unit_price, item.item_comment || null]
-      )
-    );
-    await Promise.all(insertPromises);
+        [order.id, item.menu_item_id, item.quantity, item.unit_price, item.item_comment]
+      );
+    }
 
-    return reply.status(201).send({ order_id: order.id, message: 'Заказ успешно создан' });
+    let paymentPayload = null;
+
+    if (payment_method === 'card') {
+      if (!isYooKassaConfigured()) {
+        throw new Error('YOO_KASSA_NOT_CONFIGURED');
+      }
+
+      const payment = await createYooKassaPayment({
+        amount: totalAmount,
+        orderId: order.id,
+        description: `Оплата заказа №${order.id}`,
+        returnUrl: paymentReturnUrl,
+        metadata: payment_metadata,
+      });
+
+      const confirmationUrl =
+        payment?.confirmation?.confirmation_url ||
+        payment?.confirmation?.url ||
+        payment?.confirmation?.redirect?.url ||
+        null;
+
+      await client.query(
+        `UPDATE orders
+         SET payment_id = $1,
+             payment_status = $2,
+             payment_confirmation_url = $3,
+             payment_metadata = jsonb_set(payment_metadata, '{yookassa}', $4::jsonb, true)
+         WHERE id = $5`,
+        [
+          payment.id,
+          payment.status || 'pending',
+          confirmationUrl,
+          JSON.stringify({
+            id: payment.id,
+            status: payment.status,
+            metadata: payment.metadata,
+          }),
+          order.id,
+        ]
+      );
+
+      paymentPayload = {
+        id: payment.id,
+        status: payment.status,
+        confirmation_url: confirmationUrl,
+      };
+    }
+
+    await client.query('COMMIT');
+
+    return reply.status(201).send({
+      order_id: order.id,
+      message:
+        payment_method === 'card'
+          ? 'Заказ создан. Завершите оплату.'
+          : 'Заказ успешно создан',
+      payment: paymentPayload,
+    });
   } catch (err) {
+    await client.query('ROLLBACK');
+
+    if (err.message === 'YOO_KASSA_NOT_CONFIGURED') {
+      console.error('YooKassa configuration is missing');
+      return reply
+        .status(503)
+        .send({ message: 'Онлайн-оплата временно недоступна' });
+    }
+
+    if (err.message && err.message.startsWith('Некоррект')) {
+      return reply.status(400).send({ message: err.message });
+    }
+
     console.error('Error creating order:', err);
     return reply.status(500).send({ message: 'Ошибка при создании заказа' });
+  } finally {
+    client.release();
   }
 };
 
@@ -170,6 +365,71 @@ export const updateOrderStatus = async (request, reply) => {
   } catch (err) {
     console.error(err);
     return reply.status(500).send({ message: 'Ошибка при обновлении статуса заказа' });
+  }
+};
+
+export const getOrderByPaymentId = async (request, reply) => {
+  const { paymentId } = request.params;
+
+  if (!paymentId) {
+    return reply.status(400).send({ message: 'Не указан идентификатор платежа' });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+         id,
+         payment_status,
+         payment_method,
+         status,
+         total_amount,
+         created_at
+       FROM orders
+       WHERE payment_id = $1`,
+      [paymentId]
+    );
+
+    if (result.rowCount === 0) {
+      return reply.status(404).send({ message: 'Заказ с указанным платежом не найден' });
+    }
+
+    return reply.send(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching order by payment id:', err);
+    return reply.status(500).send({ message: 'Ошибка при получении заказа' });
+  }
+};
+
+export const getOrderSummaryPublic = async (request, reply) => {
+  const { orderId } = request.params;
+
+  if (!orderId) {
+    return reply.status(400).send({ message: 'Не указан идентификатор заказа' });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+         id,
+         payment_status,
+         payment_method,
+         status,
+         total_amount,
+         payment_id,
+         created_at
+       FROM orders
+       WHERE id = $1`,
+      [orderId]
+    );
+
+    if (result.rowCount === 0) {
+      return reply.status(404).send({ message: 'Заказ не найден' });
+    }
+
+    return reply.send(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching order summary:', err);
+    return reply.status(500).send({ message: 'Ошибка при получении заказа' });
   }
 };
 

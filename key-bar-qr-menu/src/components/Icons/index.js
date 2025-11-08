@@ -22,5 +22,7 @@ export {
   CheckIcon,
   PlusIcon,
   EditIcon,
-  TrashIcon
+  TrashIcon,
+  CashIcon,
+  CardIcon
 } from './CommonIcons';

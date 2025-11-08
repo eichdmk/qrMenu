@@ -87,21 +87,37 @@
 - **Response:** `[{ id, table_id, table_name, order_type, customer_name, customer_phone, status, total_amount, created_at, items: [...] }]`
 
 ### POST `/api/orders`
-- **Описание:** Создать заказ
+- **Описание:** Создать заказ (поддерживает онлайн-оплату через YooKassa)
 - **Доступ:** Публичный
 - **Body:** 
 ```json
 {
   "table_id": 1,
-  "order_type": "dine_in" | "takeaway",
+  "order_type": "dine_in" | "takeaway" | "delivery",
   "customer_name": "Иван",
   "customer_phone": "+7...",
+  "comment": "Комментарий для кухни",
+  "payment_method": "cash" | "card",
+  "delivery_address": "г. Грозный, пр. Путина 1",
+  "delivery_fee": 200,
+  "payment_return_url": "https://app.example.com/payment/result",
   "items": [
     { "menu_item_id": 1, "quantity": 2, "unit_price": 500 }
   ]
 }
 ```
-- **Response:** `{ id, table_id, order_type, status, total_amount, created_at }`
+- **Response:** 
+```json
+{
+  "order_id": 123,
+  "message": "Заказ создан. Завершите оплату.",
+  "payment": {
+    "id": "270a0f3d-000f-5000-a000-1d2f5a31e15f",
+    "status": "pending",
+    "confirmation_url": "https://yookassa.ru/payments/..."
+  }
+}
+```
 
 ### PUT `/api/orders/:id`
 - **Описание:** Обновить статус заказа
@@ -109,7 +125,22 @@
 - **Body:** `{ status: "pending" | "preparing" | "ready" | "completed" | "cancelled" }`
 - **Response:** `{ id, status, ... }`
 
-**Итого: 3 эндпоинта**
+### GET `/api/orders/payment/:paymentId`
+- **Описание:** Получить информацию о заказе по идентификатору платежа YooKassa
+- **Доступ:** Публичный
+- **Response:** `{ id, payment_status, payment_method, status, total_amount, created_at }`
+
+**Итого: 4 эндпоинта**
+
+---
+
+## 4️⃣.1️⃣ PAYMENTS Routes (`/api/payments`)
+
+### POST `/api/payments/yookassa/webhook`
+- **Описание:** Webhook YooKassa для обновления статусов оплаты
+- **Доступ:** Используется YooKassa (Basic Auth с SHOP_ID:SECRET_KEY)
+- **Body:** Стандартное уведомление YooKassa (`event`, `object`)
+- **Response:** `{ message: "OK" }`
 
 ---
 

@@ -4,7 +4,9 @@ import {
   createOrder,
   updateOrderStatus,
   streamOrders,
-  manualCleanupOrders
+  manualCleanupOrders,
+  getOrderByPaymentId,
+  getOrderSummaryPublic
 } from '../controllers/orders.controller.js';
 
 export default async function ordersRoutes(fastify, options) {
@@ -13,6 +15,12 @@ export default async function ordersRoutes(fastify, options) {
 
   // Создать заказ — клиент
   fastify.post('/', createOrder);
+
+  // Публичная сводка заказа
+  fastify.get('/summary/:orderId', getOrderSummaryPublic);
+
+  // Получить заказ по идентификатору платежа — клиент
+  fastify.get('/payment/:paymentId', getOrderByPaymentId);
 
   // Обновить статус заказа — админ
   fastify.put('/:id', { preHandler: [authenticateToken, isAdmin] }, updateOrderStatus);
