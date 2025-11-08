@@ -163,19 +163,26 @@ function OrderManager() {
                 <p><strong>Тип заказа:</strong> {getOrderTypeLabel(order.order_type)}</p>
                 <p><strong>Клиент:</strong> {order.customer_name || 'Не указано'}</p>
                 <p><strong>Телефон:</strong> {order.customer_phone || 'Не указано'}</p>
-                <p><strong>Сумма:</strong> {formatPrice(order.total_amount)}</p>
-                <p className={styles.paymentRow}>
-                  <strong>Оплата:</strong>
-                  <span className={styles.paymentMethod}>
-                    {getPaymentMethodLabel(order.payment_method)}
-                  </span>
-                </p>
-                <p className={styles.paymentRow}>
-                  <strong>Статус оплаты:</strong>
-                  <span className={paymentBadgeClass}>
-                    {getPaymentStatusLabel(order.payment_status)}
-                  </span>
-                </p>
+                <div className={styles.paymentBlock}>
+                  <div className={styles.paymentMethodBadge}>
+                    <span className={styles.paymentMethodLabel}>Оплата</span>
+                    <span className={styles.paymentMethodValue}>
+                      {getPaymentMethodLabel(order.payment_method)}
+                    </span>
+                  </div>
+                  <div className={styles.paymentTotal}>
+                    <span className={styles.paymentTotalLabel}>Сумма</span>
+                    <span className={styles.paymentTotalValue}>{formatPrice(order.total_amount)}</span>
+                  </div>
+                </div>
+                {order.payment_method === 'card' && (
+                  <div className={styles.paymentStatusBlock}>
+                    <span className={styles.paymentStatusLabel}>Статус оплаты</span>
+                    <span className={paymentBadgeClass}>
+                      {getPaymentStatusLabel(order.payment_status)}
+                    </span>
+                  </div>
+                )}
                 <p><strong>Дата:</strong> {formatDate(order.created_at)} {formatTime(order.created_at)}</p>
                 
                 {/* Комментарий к заказу */}

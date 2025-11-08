@@ -75,6 +75,64 @@
   gap: 0.8rem;
 }
 
+.paymentBlock {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.paymentMethodBadge,
+.paymentTotal {
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(15, 118, 110, 0.02));
+  border: 1px solid rgba(15, 118, 110, 0.15);
+  border-radius: 14px;
+  padding: 0.65rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.paymentTotal {
+  border-color: rgba(47, 86, 233, 0.18);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(37, 99, 235, 0.02));
+}
+
+.paymentMethodLabel,
+.paymentTotalLabel {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 600;
+}
+
+.paymentMethodValue {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.paymentTotalValue {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.paymentStatusBlock {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.paymentStatusLabel {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 600;
+}
+
 .paymentRow {
   display: flex;
   align-items: center;
