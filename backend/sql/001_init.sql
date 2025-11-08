@@ -110,6 +110,10 @@ CREATE TABLE IF NOT EXISTS order_items (
     item_comment TEXT
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS categories_name_key ON categories(name);
+CREATE UNIQUE INDEX IF NOT EXISTS tables_name_key ON tables(name);
+CREATE UNIQUE INDEX IF NOT EXISTS tables_token_key ON tables(token);
+
 -- Опорные индексы
 CREATE INDEX IF NOT EXISTS idx_menu_items_category ON menu_items(category_id);
 CREATE INDEX IF NOT EXISTS idx_menu_items_available ON menu_items(available);

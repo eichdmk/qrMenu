@@ -57,7 +57,7 @@ function TableManager() {
 
   const handleGenerateQr = async (token, tableName) => {
     try {
-      const url = 'https://keybar.ru/table/' + token;
+      const url = 'https://key-bar.ru/table/' + token;
       const qrcode = await QRcode.toDataURL(url, { width: 500 });
 
       const link = document.createElement('a');

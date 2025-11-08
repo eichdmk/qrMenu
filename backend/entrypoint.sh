@@ -1,5 +1,5 @@
 #!/bin/sh
-set -euo pipefail
+set -eu
 
 echo "[entrypoint] Running database migrations..."
 node ./scripts/migrate.js

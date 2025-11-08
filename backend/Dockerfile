@@ -12,6 +12,7 @@ RUN rm -f /etc/apt/sources.list.d/* \
     build-essential \
     python3 \
     libvips \
+    curl \
   && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production

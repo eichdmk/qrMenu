@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { ordersAPI } from '../api/orders';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../api/constants';
 
 const playNotificationSound = () => {
   try {
@@ -98,11 +99,8 @@ export const useOrdersSSE = () => {
 
   const connectToSSE = () => {
     try {
-      const apiUrl =
-        (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) ||
-        (typeof process !== "undefined" && process.env && process.env.VITE_API_URL) ||
-        "http://localhost:3000";
-      const eventSource = new EventSource(`${apiUrl}/api/orders/stream`);
+      const streamBase = API_BASE_URL.replace(/\/$/, "");
+      const eventSource = new EventSource(`${streamBase}/orders/stream`);
       
       eventSource.onopen = () => {
         console.log('SSE connected');

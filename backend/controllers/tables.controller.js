@@ -30,16 +30,29 @@ export const getTablesWithAvailability = async (request, reply) => {
        ORDER BY t.id`
     );
 
-    const tablesWithAvailability = result.rows.map(table => ({
-      ...table,
-      is_available: !table.is_occupied && 
-                   parseInt(table.active_orders_count) === 0 && 
-                   parseInt(table.active_reservations_count) === 0,
-      availability_reason: table.is_occupied ? 'Занят' :
-                          parseInt(table.active_orders_count) > 0 ? 'Активные заказы' :
-                          parseInt(table.active_reservations_count) > 0 ? 'Забронирован' :
-                          'Доступен'
-    }));
+    const tablesWithAvailability = result.rows.map(table => {
+      const activeOrders = parseInt(table.active_orders_count, 10) || 0;
+      const activeReservations = parseInt(table.active_reservations_count, 10) || 0;
+      const isOccupied = table.is_occupied === true || table.is_occupied === 't';
+
+      let availability_reason = 'Доступен';
+      if (isOccupied) {
+        availability_reason = 'Занят';
+      } else if (activeOrders > 0) {
+        availability_reason = 'Активные заказы';
+      } else if (activeReservations > 0) {
+        availability_reason = 'Забронирован';
+      }
+
+      return {
+        ...table,
+        is_occupied: isOccupied,
+        active_orders_count: activeOrders,
+        active_reservations_count: activeReservations,
+        is_available: !isOccupied && activeOrders === 0 && activeReservations === 0,
+        availability_reason
+      };
+    });
 
     return reply.send(tablesWithAvailability);
   } catch (err) {
@@ -63,7 +76,7 @@ export const getTablesAvailabilityForDateTime = async (request, reply) => {
     const twoHoursBeforeStart = new Date(start_at.getTime() - 2 * 60 * 60 * 1000);
 
     const result = await pool.query(
-      `SELECT t.id, t.name, t.seats,
+      `SELECT t.id, t.name, t.seats, t.is_occupied,
               COUNT(CASE WHEN r.status IN ('pending', 'confirmed') 
                         AND NOT (r.end_at <= $1::timestamptz OR r.start_at >= $2::timestamptz)
                         THEN 1 END) as conflicting_reservations_count,
@@ -74,19 +87,34 @@ export const getTablesAvailabilityForDateTime = async (request, reply) => {
        FROM tables t
        LEFT JOIN reservations r ON t.id = r.table_id
        LEFT JOIN orders o ON t.id = o.table_id
-       GROUP BY t.id, t.name, t.seats
+       GROUP BY t.id, t.name, t.seats, t.is_occupied
        ORDER BY t.id`,
       [start_at.toISOString(), end_at.toISOString(), twoHoursBeforeStart.toISOString(), start_at.toISOString()]
     );
 
-    const tablesWithAvailability = result.rows.map(table => ({
-      ...table,
-      is_available: parseInt(table.conflicting_reservations_count) === 0 && 
-                   parseInt(table.active_orders_count) === 0,
-      availability_reason: parseInt(table.conflicting_reservations_count) > 0 ? 'Забронирован в это время' :
-                          parseInt(table.active_orders_count) > 0 ? 'Активные заказы в это время' :
-                          'Доступен'
-    }));
+    const tablesWithAvailability = result.rows.map(table => {
+      const activeReservations = parseInt(table.conflicting_reservations_count, 10) || 0;
+      const activeOrders = parseInt(table.active_orders_count, 10) || 0;
+      const isOccupied = table.is_occupied === true || table.is_occupied === 't';
+
+      let availability_reason = 'Доступен';
+      if (isOccupied) {
+        availability_reason = 'Занят';
+      } else if (activeReservations > 0) {
+        availability_reason = 'Забронирован в это время';
+      } else if (activeOrders > 0) {
+        availability_reason = 'Активные заказы в это время';
+      }
+
+      return {
+        ...table,
+        is_occupied: isOccupied,
+        conflicting_reservations_count: activeReservations,
+        active_orders_count: activeOrders,
+        is_available: !isOccupied && activeReservations === 0 && activeOrders === 0,
+        availability_reason
+      };
+    });
 
     return reply.send(tablesWithAvailability);
   } catch (err) {

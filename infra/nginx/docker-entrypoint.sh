@@ -16,8 +16,12 @@ mkdir -p "$(dirname "$KEY_PATH")"
 if [ -n "$SERVER_NAME" ] && [ "$SERVER_NAME" != "_" ] \
   && [ -f "$LE_CERT_FILE" ] && [ -f "$LE_KEY_FILE" ]; then
   echo "Using existing Let's Encrypt certificate for ${SERVER_NAME}."
-  cp "$LE_CERT_FILE" "$CERT_PATH"
-  cp "$LE_KEY_FILE" "$KEY_PATH"
+  if [ "$LE_CERT_FILE" != "$CERT_PATH" ]; then
+    cp "$LE_CERT_FILE" "$CERT_PATH"
+  fi
+  if [ "$LE_KEY_FILE" != "$KEY_PATH" ]; then
+    cp "$LE_KEY_FILE" "$KEY_PATH"
+  fi
 fi
 
 # Generate a self-signed certificate if nothing is available yet.
@@ -40,7 +44,8 @@ if [ -d "$TEMPLATE_DIR" ]; then
   echo "Rendering nginx templates from ${TEMPLATE_DIR} to ${OUTPUT_DIR}" 
   for template in $(find "$TEMPLATE_DIR" -type f -name "*${TEMPLATE_SUFFIX}"); do
     filename=$(basename "$template" "$TEMPLATE_SUFFIX")
-    envsubst < "$template" > "${OUTPUT_DIR}/${filename}"
+    envsubst '${SERVER_NAME} ${BACKEND_HOST} ${BACKEND_PORT} ${SSL_CERT_PATH} ${SSL_KEY_PATH} ${ACME_CHALLENGE_ROOT}' \
+      < "$template" > "${OUTPUT_DIR}/${filename}"
   done
 fi
 
