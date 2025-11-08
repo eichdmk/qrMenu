@@ -1,6 +1,5 @@
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cron from 'node-cron';
@@ -21,23 +20,9 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const certsDir = path.resolve(__dirname, '../infra/certs');
-const httpsKeyPath = path.join(certsDir, 'localhost+2-key.pem');
-const httpsCertPath = path.join(certsDir, 'localhost+2.pem');
-
-const fastifyOptions = { logger: false };
-
-if (fs.existsSync(httpsKeyPath) && fs.existsSync(httpsCertPath)) {
-  fastifyOptions.https = {
-    key: fs.readFileSync(httpsKeyPath),
-    cert: fs.readFileSync(httpsCertPath),
-  };
-  console.log('[Server] HTTPS режим включён (локальные сертификаты mkcert)');
-} else {
-  console.warn('[Server] HTTPS сертификаты не найдены, сервер стартует в HTTP режиме');
-}
-
-const fastify = Fastify(fastifyOptions);
+const fastify = Fastify({
+  logger: false,
+});
 
 await fastify.register(import('@fastify/cors'), {
   origin: true

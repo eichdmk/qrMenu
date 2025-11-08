@@ -3,7 +3,7 @@ const resolveApiBaseUrl = () => {
   const envUrl =
     (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) ||
     (typeof process !== "undefined" && process.env && process.env.VITE_API_URL) ||
-    "https://localhost:3000/api";
+    "http://localhost:3000/api";
 
   return envUrl.replace(/\/$/, "");
 };
@@ -16,7 +16,7 @@ const resolveStaticBaseUrl = () => {
     const pathname = apiUrl.pathname.replace(/\/?api\/?$/, "");
     return `${apiUrl.origin}${pathname}`.replace(/\/$/, "");
   } catch (error) {
-    return "https://localhost:3000";
+    return "http://localhost:3000";
   }
 };
 
