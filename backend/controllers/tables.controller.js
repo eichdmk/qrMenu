@@ -1,5 +1,14 @@
 import pool from '../db.js';
 
+const RESTAURANT_TZ_OFFSET = process.env.RESTAURANT_TZ_OFFSET || '+03:00';
+
+const createDateWithOffset = (date, time) => {
+  if (!date || !time) {
+    return null;
+  }
+  return new Date(`${date}T${time}:00${RESTAURANT_TZ_OFFSET}`);
+};
+
 // Добавить новый столик
 export const createTable = async (request, reply) => {
   try {
@@ -69,10 +78,12 @@ export const getTablesAvailabilityForDateTime = async (request, reply) => {
       return reply.status(400).send({ message: 'Необходимо указать дату и время' });
     }
 
-    const start_at = new Date(`${date}T${time}:00`);
-    const end_at = new Date(start_at);
-    end_at.setHours(end_at.getHours() + 2);
+    const start_at = createDateWithOffset(date, time);
+    if (Number.isNaN(start_at?.getTime())) {
+      return reply.status(400).send({ message: 'Некорректные дата или время' });
+    }
 
+    const end_at = new Date(start_at.getTime() + 2 * 60 * 60 * 1000);
     const twoHoursBeforeStart = new Date(start_at.getTime() - 2 * 60 * 60 * 1000);
 
     const result = await pool.query(
