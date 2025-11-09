@@ -62,7 +62,7 @@ function Requisites() {
           </li>
           <li>
             <span style={HIGHLIGHT_STYLE}>Электронная почта:&nbsp;</span>
-            info@key-bar.ru
+            keybar1@icloud.com
           </li>
           <li>
             <span style={HIGHLIGHT_STYLE}>Мессенджеры:&nbsp;</span>
