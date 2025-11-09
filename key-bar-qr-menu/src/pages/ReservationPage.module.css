@@ -121,6 +121,13 @@
   border-color: #d6d6d6;
 }
 
+.consentNote{
+  background-color: white;
+  color: var(--text-secondary);
+  padding: 10px;
+  border-radius: var(--radius-lg);
+}
+
 .formInput:focus {
   outline: none;
   border-color: var(--accent);

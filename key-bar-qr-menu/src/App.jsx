@@ -16,6 +16,7 @@ import ReservationPage from "./pages/ReservationPage";
 import MenuItemPage from "./pages/MenuItemPage";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import PublicOffer from "./pages/PublicOffer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -58,6 +59,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
+      <Route path="/offer" element={<PublicOffer />} />
       <Route path="/requisites" element={<Requisites />} />
       <Route path="/payment/result" element={<PaymentResultPage />} />
       <Route path="/table/:token" element={<QRTablePage />} />

@@ -23,7 +23,7 @@ function ReservationPage() {
   const navigate = useNavigate();
 
   const timeSlots = Array.from({ length: (23 - 10) * 4 + 1 }, (_, index) => {
-    const minutesFromStart = index * 15; 
+    const minutesFromStart = index * 15;
     const hour = 10 + Math.floor(minutesFromStart / 60);
     const minute = minutesFromStart % 60;
     const hh = String(hour).padStart(2, "0");
@@ -56,7 +56,7 @@ function ReservationPage() {
         }
       }
     };
-    
+
     updateTablesAvailability();
   }, [formData.date, formData.time]);
 
@@ -80,7 +80,7 @@ function ReservationPage() {
     const startDate = new Date(`${date}T${time}:00`);
     const endDate = new Date(startDate);
     endDate.setHours(endDate.getHours() + 2);
-    
+
     const formatLocalISO = (date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -88,12 +88,12 @@ function ReservationPage() {
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
-      
-      const timezoneOffset = -date.getTimezoneOffset(); 
+
+      const timezoneOffset = -date.getTimezoneOffset();
       const offsetHours = String(Math.floor(Math.abs(timezoneOffset) / 60)).padStart(2, '0');
       const offsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(2, '0');
       const offsetSign = timezoneOffset >= 0 ? '+' : '-';
-      
+
       return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMinutes}`;
     };
 
@@ -137,7 +137,7 @@ function ReservationPage() {
               </span>
             </div>
           </div>
-          <button className={styles.homeButton} onClick={() => navigate("/")}> 
+          <button className={styles.homeButton} onClick={() => navigate("/")}>
             <span className={styles.buttonIcon}><HomeIcon size={18} /></span>
             Вернуться на главную
           </button>
@@ -234,8 +234,8 @@ function ReservationPage() {
                 >
                   <option value="">-- Выберите столик --</option>
                   {tables.map((table) => (
-                    <option 
-                      key={table.id} 
+                    <option
+                      key={table.id}
                       value={table.id}
                       disabled={!table.is_available}
                     >
@@ -278,6 +278,12 @@ function ReservationPage() {
                   className={styles.formInput}
                 />
               </div>
+
+              <p className={styles.consentNote}>
+                Отправляя форму, вы подтверждаете согласие с
+                <a href="/privacy"> Политикой конфиденциальности</a> и
+                <a href="/offer"> Публичной офертой</a> Key Bar.
+              </p>
             </div>
 
             <button
@@ -307,8 +313,8 @@ function ReservationPage() {
               </h3>
               <div className={styles.tablesGrid}>
                 {tables.map((table) => (
-                  <div 
-                    key={table.id} 
+                  <div
+                    key={table.id}
                     className={`${styles.tableCard} ${table.is_available ? styles.available : styles.unavailable}`}
                   >
                     <div className={styles.tableName}>№{table.name}</div>

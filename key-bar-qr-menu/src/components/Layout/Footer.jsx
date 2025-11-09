@@ -1,6 +1,9 @@
 import styles from "./Footer.module.css";
+import { useMemo } from 'react';
 
 function Footer() {
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
+  
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -66,7 +69,7 @@ function Footer() {
         </div>
 
         <div className={styles.copyright}>
-          <p>&copy; 2025 Key Bar. Все права защищены.</p>
+        <p>&copy; {currentYear} Key Bar. Все права защищены.</p>
           <p>Сайт разработан
             (<a target="_blank" href="https://t.me/eichdmk">eichdmk</a>)</p>
           <div className={styles.legalLinks}>
@@ -75,6 +78,8 @@ function Footer() {
             <a href="/terms">Условия использования</a>
             <span>•</span>
             <a href="/requisites">Реквизиты</a>
+            <span>•</span>
+            <a href="/offer">Публичная оферта</a>
           </div>
         </div>
       </div>
