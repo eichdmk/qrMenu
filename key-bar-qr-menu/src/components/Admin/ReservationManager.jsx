@@ -1,4 +1,3 @@
-import { useMenu } from "../../hooks/useMenu";
 import { reservationsAPI } from "../../api/reservations";
 import { getStatusText, getStatusColor, formatDate, formatTime } from "../../utils/format";
 import { toast } from "react-toastify";
@@ -13,10 +12,17 @@ function ReservationManager() {
     fetchReservations();
   }, []);
 
+  const notifyPendingCount = (list) => {
+    const pendingCount = list.filter((item) => item.status === "pending").length;
+    window.dispatchEvent(new CustomEvent("reservations:pending-count", { detail: pendingCount }));
+  };
+
   const fetchReservations = async () => {
     try {
       const response = await reservationsAPI.getAll();
-      setReservations(response.data);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setReservations(data);
+      notifyPendingCount(data);
     } catch (error) {
       toast.error("Ошибка загрузки бронирований");
     } finally {
@@ -28,7 +34,7 @@ function ReservationManager() {
     try {
       await reservationsAPI.updateStatus(id, { status: newStatus });
       toast.success("Статус бронирования обновлён");
-      fetchReservations()
+      fetchReservations();
     } catch (error) {
       toast.error(error.response?.data?.message || "Ошибка при обновлении статуса");
     }
