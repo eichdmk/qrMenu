@@ -42,6 +42,8 @@ const STATUS_CONFIG = {
   },
 };
 
+const FINAL_STATUSES = ["succeeded", "canceled", "refunded"];
+
 const STATUS_LABELS = {
   succeeded: "Оплачено",
   pending: "Ожидание подтверждения",
@@ -120,8 +122,11 @@ function PaymentResultPage() {
   const statusConfig = STATUS_CONFIG[error ? "error" : status] || STATUS_CONFIG.pending;
 
   const loadStatus = useCallback(
-    async (id, { silent = false } = {}) => {
+    async (id, { silent = false, skipIfFinal = false } = {}) => {
       if (!id) return;
+      if (skipIfFinal && FINAL_STATUSES.includes(status)) {
+        return;
+      }
 
       if (!silent) {
         setLoading(true);
@@ -160,7 +165,7 @@ function PaymentResultPage() {
         }
       }
     },
-    []
+    [status]
   );
 
   useEffect(() => {
@@ -178,6 +183,8 @@ function PaymentResultPage() {
   useEffect(() => {
     cancelledRef.current = false;
 
+    const isFinal = FINAL_STATUSES.includes(status);
+
     if (!paymentId) {
       setStatus("unknown");
       setPaymentInfo(null);
@@ -191,9 +198,11 @@ function PaymentResultPage() {
       clearInterval(pollRef.current);
     }
 
-    pollRef.current = setInterval(() => {
-      loadStatus(paymentId, { silent: true });
-    }, 5000);
+    if (!isFinal) {
+      pollRef.current = setInterval(() => {
+        loadStatus(paymentId, { silent: true, skipIfFinal: true });
+      }, 5000);
+    }
 
     return () => {
       cancelledRef.current = true;
@@ -206,17 +215,24 @@ function PaymentResultPage() {
 
   useEffect(() => {
     if (!paymentId) return;
-    if (["succeeded", "canceled", "refunded"].includes(status)) {
+    if (FINAL_STATUSES.includes(status)) {
       sessionStorage.removeItem("kb_recent_payment_id");
       sessionStorage.removeItem("kb_recent_reservation_payment_id");
+
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
     }
   }, [paymentId, status]);
 
+  const isFinalStatus = FINAL_STATUSES.includes(status);
+
   const handleRefresh = useCallback(() => {
-    if (paymentId) {
+    if (paymentId && !FINAL_STATUSES.includes(status)) {
       loadStatus(paymentId);
     }
-  }, [loadStatus, paymentId]);
+  }, [loadStatus, paymentId, status]);
 
   return (
     <div className={styles.page}>
@@ -283,7 +299,7 @@ function PaymentResultPage() {
           >
             Вернуться в меню
           </button>
-          {paymentId && (
+          {paymentId && !isFinalStatus && (
             <button
               className={styles.secondaryButton}
               onClick={handleRefresh}
