@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import pool from '../db.js';
 import { isYooKassaConfigured } from '../services/yookassa.js';
 
@@ -34,14 +35,59 @@ export const handleYooKassaWebhook = async (request, reply) => {
     return reply.status(503).send({ message: 'Интеграция YooKassa не настроена' });
   }
 
-  const expectedAuth = buildExpectedAuthHeader();
-  if (!expectedAuth) {
-    return reply.status(503).send({ message: 'Интеграция YooKassa не настроена' });
-  }
+  const signatureHeader =
+    request.headers['x-yookassa-signature'] ||
+    request.headers['X-Yookassa-Signature'] ||
+    request.headers['X-YooKassa-Signature'];
 
-  const authHeader = request.headers.authorization || request.headers.Authorization || '';
-  if (authHeader !== expectedAuth) {
-    return reply.status(401).send({ message: 'Некорректная авторизация' });
+  if (signatureHeader) {
+    if (!secretKey) {
+      return reply.status(503).send({ message: 'Интеграция YooKassa не настроена' });
+    }
+
+    if (typeof request.rawBody !== 'string') {
+      console.error('YooKassa webhook: raw body is not available for signature validation');
+      return reply
+        .status(500)
+        .send({ message: 'Сервер временно не готов обработать уведомление' });
+    }
+
+    const signatureMatch = signatureHeader.trim().match(/^sha256=(.+)$/i);
+    if (!signatureMatch || !signatureMatch[1]) {
+      return reply.status(401).send({ message: 'Некорректная подпись' });
+    }
+
+    const providedSignature = signatureMatch[1].trim();
+
+    try {
+      const expectedSignature = crypto
+        .createHmac('sha256', secretKey)
+        .update(request.rawBody, 'utf8')
+        .digest('hex');
+
+      const providedBuffer = Buffer.from(providedSignature, 'hex');
+      const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+
+      if (
+        providedBuffer.length !== expectedBuffer.length ||
+        !crypto.timingSafeEqual(providedBuffer, expectedBuffer)
+      ) {
+        return reply.status(401).send({ message: 'Некорректная подпись' });
+      }
+    } catch (error) {
+      console.error('YooKassa webhook signature verification failed:', error);
+      return reply.status(401).send({ message: 'Некорректная подпись' });
+    }
+  } else {
+    const expectedAuth = buildExpectedAuthHeader();
+    if (!expectedAuth) {
+      return reply.status(503).send({ message: 'Интеграция YooKassa не настроена' });
+    }
+
+    const authHeader = request.headers.authorization || request.headers.Authorization || '';
+    if (authHeader !== expectedAuth) {
+      return reply.status(401).send({ message: 'Некорректная авторизация' });
+    }
   }
 
   const event = request.body;

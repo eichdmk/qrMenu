@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cron from 'node-cron';
+import fastifyRawBody from 'fastify-raw-body';
 import { createDefaultAdmin } from './utils/initAdmin.js';
 import { cleanupOldOrders } from './utils/cleanupOrders.js';
 // Роуты
@@ -22,6 +23,13 @@ const __dirname = path.dirname(__filename);
 
 const fastify = Fastify({
   logger: false,
+});
+
+await fastify.register(fastifyRawBody, {
+  field: 'rawBody',
+  global: false,
+  encoding: 'utf8',
+  runFirst: true,
 });
 
 await fastify.register(import('@fastify/cors'), {
