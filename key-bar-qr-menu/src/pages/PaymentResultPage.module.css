@@ -90,6 +90,16 @@
   letter-spacing: 0.5px;
 }
 
+.link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
 .actions {
   margin-top: 24px;
   display: flex;

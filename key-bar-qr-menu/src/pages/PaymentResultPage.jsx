@@ -42,6 +42,62 @@ const STATUS_CONFIG = {
   },
 };
 
+const STATUS_LABELS = {
+  succeeded: "Оплачено",
+  pending: "Ожидание подтверждения",
+  unpaid: "Не оплачено",
+  canceled: "Отменено",
+  refunded: "Возврат",
+  error: "Ошибка",
+  unknown: "Неизвестно",
+};
+
+const deriveStatus = (data) => {
+  if (!data) return "unknown";
+
+  const rawStatus = (data.payment_status || "").toLowerCase();
+  const entityStatus = (data.status || "").toLowerCase();
+  const entityType = (data.entity_type || data.type || "order").toLowerCase();
+
+  if (["succeeded", "canceled", "refunded"].includes(rawStatus)) {
+    return rawStatus;
+  }
+
+  if (["pending", "waiting_for_capture", "waiting_for_payment"].includes(rawStatus)) {
+    return "pending";
+  }
+
+  if (entityType === "reservation") {
+    if (entityStatus === "confirmed") {
+      return "succeeded";
+    }
+    if (["cancelled", "canceled"].includes(entityStatus)) {
+      return "canceled";
+    }
+  }
+
+  if (entityType === "order") {
+    if (["preparing", "ready", "completed", "delivered"].includes(entityStatus)) {
+      return "succeeded";
+    }
+    if (["cancelled", "canceled"].includes(entityStatus)) {
+      return "canceled";
+    }
+  }
+
+  if (rawStatus) {
+    return STATUS_CONFIG[rawStatus] ? rawStatus : "pending";
+  }
+
+  if (entityStatus) {
+    if (["cancelled", "canceled"].includes(entityStatus)) {
+      return "canceled";
+    }
+  }
+
+  return "pending";
+};
+
 function PaymentResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -78,14 +134,17 @@ function PaymentResultPage() {
 
         const data = response.data || {};
         const type = data.entity_type || data.type || "order";
+        const normalizedStatus = deriveStatus(data);
 
         setEntityType(type);
-        setPaymentInfo(data);
-        const newStatus = data.payment_status || "pending";
-        setStatus(newStatus);
+        setPaymentInfo({
+          ...data,
+          payment_status: normalizedStatus,
+        });
+        setStatus(normalizedStatus);
         setError(null);
 
-        if (newStatus !== "pending" && pollRef.current) {
+        if (normalizedStatus !== "pending" && pollRef.current) {
           clearInterval(pollRef.current);
           pollRef.current = null;
         }
@@ -197,8 +256,23 @@ function PaymentResultPage() {
             )}
             <div className={styles.orderRow}>
               <span className={styles.label}>Статус оплаты</span>
-              <span className={styles.statusBadge}>{paymentInfo.payment_status}</span>
+              <span className={styles.statusBadge}>
+                {STATUS_LABELS[paymentInfo.payment_status] || paymentInfo.payment_status || "—"}
+              </span>
             </div>
+            {paymentInfo.payment_receipt_url && (
+              <div className={styles.orderRow}>
+                <span className={styles.label}>Чек</span>
+                <a
+                  className={styles.link}
+                  href={paymentInfo.payment_receipt_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Открыть
+                </a>
+              </div>
+            )}
           </div>
         )}
 
