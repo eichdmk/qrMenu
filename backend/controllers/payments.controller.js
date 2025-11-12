@@ -129,7 +129,10 @@ export const handleYooKassaWebhook = async (request, reply) => {
       const reservationUpdateResult = await client.query(
         `UPDATE reservations
          SET payment_status = $1,
-             payment_id = $2,
+             payment_id = CASE
+               WHEN payment_id IS NULL OR payment_id = $2 THEN $2
+               ELSE payment_id
+             END,
              payment_receipt_url = COALESCE($3, payment_receipt_url),
              payment_method = CASE
                WHEN $4::text IS NOT NULL THEN $4
@@ -191,7 +194,10 @@ export const handleYooKassaWebhook = async (request, reply) => {
       const updateResult = await client.query(
         `UPDATE orders
          SET payment_status = $1,
-             payment_id = $2,
+             payment_id = CASE
+               WHEN payment_id IS NULL OR payment_id = $2 THEN $2
+               ELSE payment_id
+             END,
              payment_receipt_url = COALESCE($3, payment_receipt_url),
              payment_method = CASE
                WHEN $7::text IS NOT NULL THEN $7
