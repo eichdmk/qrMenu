@@ -256,3 +256,65 @@ export const handleYooKassaWebhook = async (request, reply) => {
   }
 };
 
+export const getPaymentStatusById = async (request, reply) => {
+  const { paymentId } = request.params ?? {};
+
+  if (!paymentId) {
+    return reply.status(400).send({ message: 'Не указан идентификатор платежа' });
+  }
+
+  try {
+    const orderResult = await pool.query(
+      `SELECT 
+         id,
+         payment_id,
+         payment_status,
+         payment_method,
+         status,
+         total_amount,
+         payment_confirmation_url,
+         payment_receipt_url,
+         created_at,
+         'order' AS entity_type
+       FROM orders
+       WHERE payment_id = $1`,
+      [paymentId]
+    );
+
+    if (orderResult.rowCount > 0) {
+      return reply.send(orderResult.rows[0]);
+    }
+
+    const reservationResult = await pool.query(
+      `SELECT 
+         id,
+         payment_id,
+         table_id,
+         customer_name,
+         start_at,
+         end_at,
+         total_amount,
+         payment_method,
+         payment_status,
+         payment_id,
+         payment_confirmation_url,
+         payment_receipt_url,
+         status,
+         created_at,
+         'reservation' AS entity_type
+       FROM reservations
+       WHERE payment_id = $1`,
+      [paymentId]
+    );
+
+    if (reservationResult.rowCount > 0) {
+      return reply.send(reservationResult.rows[0]);
+    }
+
+    return reply.status(404).send({ message: 'Платеж с указанным идентификатором не найден' });
+  } catch (error) {
+    console.error('Ошибка при получении статуса платежа:', error);
+    return reply.status(500).send({ message: 'Ошибка при получении статуса платежа' });
+  }
+};
+

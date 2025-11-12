@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ordersAPI } from "../api/orders";
-import { reservationsAPI } from "../api/reservations";
+import { paymentsAPI } from "../api/payments";
 import { formatPrice } from "../utils/format";
 import styles from "./PaymentResultPage.module.css";
 
@@ -54,12 +53,56 @@ function PaymentResultPage() {
   const [error, setError] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
 
+  const pollRef = useRef(null);
+  const cancelledRef = useRef(false);
+
   const queryPaymentId = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return params.get("payment_id") || params.get("paymentId") || params.get("paymentId".toLowerCase());
   }, [location.search]);
 
   const statusConfig = STATUS_CONFIG[error ? "error" : status] || STATUS_CONFIG.pending;
+
+  const loadStatus = useCallback(
+    async (id, { silent = false } = {}) => {
+      if (!id) return;
+
+      if (!silent) {
+        setLoading(true);
+      }
+
+      try {
+        const response = await paymentsAPI.getStatus(id);
+
+        if (cancelledRef.current) return;
+
+        const data = response.data || {};
+        const type = data.entity_type || data.type || "order";
+
+        setEntityType(type);
+        setPaymentInfo(data);
+        const newStatus = data.payment_status || "pending";
+        setStatus(newStatus);
+        setError(null);
+
+        if (newStatus !== "pending" && pollRef.current) {
+          clearInterval(pollRef.current);
+          pollRef.current = null;
+        }
+      } catch (err) {
+        if (cancelledRef.current) return;
+
+        setError(err?.response?.data?.message || "Не удалось получить статус оплаты");
+        setStatus("error");
+        setPaymentInfo(null);
+      } finally {
+        if (!cancelledRef.current && !silent) {
+          setLoading(false);
+        }
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     let id = queryPaymentId;
@@ -71,81 +114,50 @@ function PaymentResultPage() {
     }
 
     setPaymentId(id);
+  }, [queryPaymentId]);
 
-    if (!id) {
+  useEffect(() => {
+    cancelledRef.current = false;
+
+    if (!paymentId) {
       setStatus("unknown");
+      setPaymentInfo(null);
       setLoading(false);
       return;
     }
 
-    let cancelled = false;
-    let pollId;
+    loadStatus(paymentId);
 
-    const loadStatus = async (isPolling = false) => {
-      setLoading(true);
-      try {
-        let response;
-        let type = "order";
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+    }
 
-        try {
-          response = await ordersAPI.getByPaymentId(id);
-        } catch (orderError) {
-          if (orderError?.response?.status === 404) {
-            type = "reservation";
-            response = await reservationsAPI.getByPaymentId(id);
-          } else {
-            throw orderError;
-          }
-        }
-
-        if (cancelled) return;
-
-        setEntityType(type);
-        setPaymentInfo(response.data);
-        const newStatus = response.data.payment_status || "pending";
-        setStatus(newStatus);
-        setError(null);
-
-        if (newStatus !== "pending" && pollId) {
-          clearInterval(pollId);
-          pollId = null;
-        }
-      } catch (err) {
-        if (cancelled) return;
-
-        setError(err?.response?.data?.message || "Не удалось получить статус оплаты");
-        setStatus("error");
-        if (pollId && !isPolling) {
-          clearInterval(pollId);
-          pollId = null;
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadStatus();
-
-    pollId = setInterval(() => {
-      loadStatus(true);
+    pollRef.current = setInterval(() => {
+      loadStatus(paymentId, { silent: true });
     }, 5000);
 
     return () => {
-      cancelled = true;
-      if (pollId) {
-        clearInterval(pollId);
+      cancelledRef.current = true;
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
       }
     };
-  }, [queryPaymentId]);
+  }, [paymentId, loadStatus]);
 
   useEffect(() => {
-    if (paymentId) {
+    if (!paymentId) return;
+    if (["succeeded", "canceled", "refunded"].includes(status)) {
       sessionStorage.removeItem("kb_recent_payment_id");
       sessionStorage.removeItem("kb_recent_reservation_payment_id");
     }
   }, [paymentId, status]);
+
+  const handleRefresh = useCallback(() => {
+    if (paymentId) {
+      loadStatus(paymentId);
+    }
+  }, [loadStatus, paymentId]);
 
   return (
     <div className={styles.page}>
@@ -200,7 +212,7 @@ function PaymentResultPage() {
           {paymentId && (
             <button
               className={styles.secondaryButton}
-              onClick={() => window.location.reload()}
+              onClick={handleRefresh}
               disabled={loading}
             >
               Обновить статус
