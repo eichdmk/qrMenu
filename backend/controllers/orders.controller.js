@@ -384,7 +384,9 @@ export const getOrderByPaymentId = async (request, reply) => {
          payment_method,
          status,
          total_amount,
-         created_at
+         created_at,
+         payment_confirmation_url,
+         payment_receipt_url
        FROM orders
        WHERE payment_id = $1`,
       [paymentId]
@@ -408,7 +410,19 @@ export const getOrderByPaymentId = async (request, reply) => {
       );
 
       if (reservationResult.rowCount === 0) {
-        return reply.status(404).send({ message: 'Заказ с указанным платежом не найден' });
+        return reply.status(200).send({
+          id: null,
+          payment_id: paymentId,
+          payment_status: 'pending',
+          payment_method: null,
+          status: 'pending',
+          total_amount: null,
+          created_at: null,
+          payment_confirmation_url: null,
+          payment_receipt_url: null,
+          entity_type: 'unknown',
+          message: 'Платёж ещё обрабатывается. Попробуйте обновить статус через несколько секунд.',
+        });
       }
 
       return reply.send({
