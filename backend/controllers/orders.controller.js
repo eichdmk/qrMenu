@@ -379,6 +379,7 @@ export const getOrderByPaymentId = async (request, reply) => {
     const result = await pool.query(
       `SELECT 
          id,
+         payment_id,
          payment_status,
          payment_method,
          status,
@@ -390,10 +391,36 @@ export const getOrderByPaymentId = async (request, reply) => {
     );
 
     if (result.rowCount === 0) {
-      return reply.status(404).send({ message: 'Заказ с указанным платежом не найден' });
+      const reservationResult = await pool.query(
+        `SELECT 
+           id,
+           payment_id,
+           payment_status,
+           payment_method,
+           status,
+           total_amount,
+           created_at,
+           payment_confirmation_url,
+           payment_receipt_url
+         FROM reservations
+         WHERE payment_id = $1`,
+        [paymentId]
+      );
+
+      if (reservationResult.rowCount === 0) {
+        return reply.status(404).send({ message: 'Заказ с указанным платежом не найден' });
+      }
+
+      return reply.send({
+        ...reservationResult.rows[0],
+        entity_type: 'reservation',
+      });
     }
 
-    return reply.send(result.rows[0]);
+    return reply.send({
+      ...result.rows[0],
+      entity_type: 'order',
+    });
   } catch (err) {
     console.error('Error fetching order by payment id:', err);
     return reply.status(500).send({ message: 'Ошибка при получении заказа' });
