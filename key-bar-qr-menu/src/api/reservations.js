@@ -8,4 +8,5 @@ export const reservationsAPI = {
   update: (id, data) => api.put(`/reservations/${id}`, data),
   updateStatus: (id, data) => api.patch(`/reservations/${id}/status`, data),
   delete: (id) => api.delete(`/reservations/${id}`),
+  getByPaymentId: (paymentId) => api.get(`/reservations/payment/${paymentId}`),
 };

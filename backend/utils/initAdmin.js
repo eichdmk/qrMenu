@@ -22,7 +22,6 @@ export const createDefaultAdmin = async () => {
 
     const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10);
 
-    // Создаём админа
     await pool.query(
       `INSERT INTO users (username, password_hash, role) 
        VALUES ($1, $2, 'admin')`,

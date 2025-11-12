@@ -5,10 +5,13 @@ import {
   createReservation,
   updateReservation,
   updateReservationStatus,
-  deleteReservation
+  deleteReservation,
+  getReservationPaymentStatus,
 } from '../controllers/reservations.controller.js';
 
 export default async function reservationsRoutes(fastify, options) {
+  fastify.get('/payment/:paymentId', getReservationPaymentStatus);
+
   // Получить все брони  админ
   fastify.get('/', { preHandler: [authenticateToken, isAdmin] }, getAllReservations);
 

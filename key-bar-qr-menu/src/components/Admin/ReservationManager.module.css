@@ -15,6 +15,48 @@
   padding-bottom: 1rem;
 }
 
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-color, #34495e);
+}
+
+.checkboxLabel input {
+  width: 16px;
+  height: 16px;
+}
+
+.refreshButton {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-color, #3498db);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.refreshButton:hover {
+  background: #2c80b9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(44, 128, 185, 0.18);
+}
+
+.refreshButton:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 .header h2 {
   margin: 0;
   color: var(--dark-color, #2c3e50);
@@ -104,6 +146,17 @@
   gap: 1rem;
 }
 
+.headerBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.subtleText {
+  font-size: 0.85rem;
+  color: var(--text-color, #7f8c8d);
+}
+
 .reservationHeader h4 {
   margin: 0;
   font-size: 1.2rem;
@@ -139,6 +192,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 1rem;
+  color: var(--text-color, #34495e);
+  font-weight: 500;
 }
 
 .phoneLink {
@@ -181,6 +240,189 @@
   border-color: var(--primary-color, #3498db);
 }
 
+.paymentInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.paymentMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.paymentMethod {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.paymentBadge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.paymentBadgeUnpaid {
+  background: #fde68a;
+  color: #92400e;
+}
+
+.paymentBadgePending {
+  background: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.paymentBadgeSucceeded {
+  background: #bbf7d0;
+  color: #166534;
+}
+
+.paymentBadgeCanceled,
+.paymentBadgeRefunded {
+  background: #fecdd3;
+  color: #881337;
+}
+
+.paymentTotal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.paymentValue {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.confirmationLink {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.confirmationLink:hover {
+  text-decoration: underline;
+}
+
+.preorderSection {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.preorderHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.preorderTitle {
+  font-weight: 600;
+  color: #111827;
+}
+
+.preorderCount {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.preorderList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.preorderItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.preorderItemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: #1f2937;
+}
+
+.preorderItemComment {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.preorderItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.preorderQuantity {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.preorderPrice {
+  font-weight: 600;
+  color: #0f766e;
+}
+
+.noPreorder {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.noteGroup .value {
+  white-space: pre-wrap;
+}
+
+.actionsLeft,
+.actionsRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.deleteButton {
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.deleteButton:hover {
+  background: #fecaca;
+  transform: translateY(-1px);
+}
+
+.deleteButton:active {
+  transform: translateY(0);
+}
+
 /* --- Адаптивность --- */
 @media (max-width: 768px) {
   .manager {
@@ -195,5 +437,18 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .paymentInfo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .paymentTotal {
+    margin-left: 0;
+  }
+
+  .headerControls {
+    justify-content: flex-start;
   }
 }

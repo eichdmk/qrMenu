@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ordersAPI } from "../api/orders";
+import { reservationsAPI } from "../api/reservations";
 import { formatPrice } from "../utils/format";
 import styles from "./PaymentResultPage.module.css";
 
@@ -48,7 +49,8 @@ function PaymentResultPage() {
 
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("pending");
-  const [orderInfo, setOrderInfo] = useState(null);
+  const [paymentInfo, setPaymentInfo] = useState(null);
+  const [entityType, setEntityType] = useState("order");
   const [error, setError] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
 
@@ -63,10 +65,9 @@ function PaymentResultPage() {
     let id = queryPaymentId;
 
     if (!id) {
-      const storedId = sessionStorage.getItem("kb_recent_payment_id");
-      if (storedId) {
-        id = storedId;
-      }
+      const storedOrderPayment = sessionStorage.getItem("kb_recent_payment_id");
+      const storedReservationPayment = sessionStorage.getItem("kb_recent_reservation_payment_id");
+      id = storedOrderPayment || storedReservationPayment || null;
     }
 
     setPaymentId(id);
@@ -83,18 +84,35 @@ function PaymentResultPage() {
     const loadStatus = async (isPolling = false) => {
       setLoading(true);
       try {
-        const response = await ordersAPI.getByPaymentId(id);
+        let response;
+        let type = "order";
+
+        try {
+          response = await ordersAPI.getByPaymentId(id);
+        } catch (orderError) {
+          if (orderError?.response?.status === 404) {
+            type = "reservation";
+            response = await reservationsAPI.getByPaymentId(id);
+          } else {
+            throw orderError;
+          }
+        }
+
         if (cancelled) return;
-        setOrderInfo(response.data);
+
+        setEntityType(type);
+        setPaymentInfo(response.data);
         const newStatus = response.data.payment_status || "pending";
         setStatus(newStatus);
         setError(null);
+
         if (newStatus !== "pending" && pollId) {
           clearInterval(pollId);
           pollId = null;
         }
       } catch (err) {
         if (cancelled) return;
+
         setError(err?.response?.data?.message || "Не удалось получить статус оплаты");
         setStatus("error");
         if (pollId && !isPolling) {
@@ -125,6 +143,7 @@ function PaymentResultPage() {
   useEffect(() => {
     if (paymentId) {
       sessionStorage.removeItem("kb_recent_payment_id");
+      sessionStorage.removeItem("kb_recent_reservation_payment_id");
     }
   }, [paymentId, status]);
 
@@ -138,19 +157,35 @@ function PaymentResultPage() {
         {loading && <div className={styles.loader}>Проверяем статус оплаты...</div>}
         {error && <div className={styles.error}>{error}</div>}
 
-        {orderInfo && (
+        {paymentInfo && (
           <div className={styles.orderInfo}>
             <div className={styles.orderRow}>
-              <span className={styles.label}>Номер заказа</span>
-              <span className={styles.value}>№{orderInfo.id}</span>
+              <span className={styles.label}>
+                {entityType === "reservation" ? "Номер брони" : "Номер заказа"}
+              </span>
+              <span className={styles.value}>№{paymentInfo.id}</span>
+            </div>
+            <div className={styles.orderRow}>
+              <span className={styles.label}>Тип</span>
+              <span className={styles.value}>
+                {entityType === "reservation" ? "Бронирование" : "Заказ"}
+              </span>
             </div>
             <div className={styles.orderRow}>
               <span className={styles.label}>Сумма</span>
-              <span className={styles.value}>{formatPrice(orderInfo.total_amount)}</span>
+              <span className={styles.value}>{formatPrice(paymentInfo.total_amount)}</span>
             </div>
+            {paymentInfo.payment_method && (
+              <div className={styles.orderRow}>
+                <span className={styles.label}>Способ оплаты</span>
+                <span className={styles.value}>
+                  {paymentInfo.payment_method === "card" ? "Онлайн (карта)" : "Наличными"}
+                </span>
+              </div>
+            )}
             <div className={styles.orderRow}>
               <span className={styles.label}>Статус оплаты</span>
-              <span className={styles.statusBadge}>{orderInfo.payment_status}</span>
+              <span className={styles.statusBadge}>{paymentInfo.payment_status}</span>
             </div>
           </div>
         )}
