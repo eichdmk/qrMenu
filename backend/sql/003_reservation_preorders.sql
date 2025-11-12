@@ -12,14 +12,39 @@ ALTER TABLE reservations
 
 ALTER TABLE reservations
   DROP CONSTRAINT IF EXISTS reservations_payment_method_check,
-  DROP CONSTRAINT IF EXISTS reservations_payment_status_check;
+  DROP CONSTRAINT IF EXISTS reservations_payment_status_check,
+  DROP CONSTRAINT IF EXISTS reservations_total_amount_check;
 
-ALTER TABLE reservations
-  ADD CONSTRAINT reservations_payment_method_check CHECK (payment_method IN ('cash','card')),
-  ADD CONSTRAINT reservations_payment_status_check CHECK (
-    payment_status IN ('unpaid','pending','succeeded','canceled','refunded')
-  ),
-  ADD CONSTRAINT reservations_total_amount_check CHECK (total_amount >= 0);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'reservations_payment_method_check'
+      AND conrelid = 'reservations'::regclass
+  ) THEN
+    EXECUTE 'ALTER TABLE reservations ADD CONSTRAINT reservations_payment_method_check CHECK (payment_method IN (''cash'',''card''))';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'reservations_payment_status_check'
+      AND conrelid = 'reservations'::regclass
+  ) THEN
+    EXECUTE 'ALTER TABLE reservations ADD CONSTRAINT reservations_payment_status_check CHECK (payment_status IN (''unpaid'',''pending'',''succeeded'',''canceled'',''refunded''))';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'reservations_total_amount_check'
+      AND conrelid = 'reservations'::regclass
+  ) THEN
+    EXECUTE 'ALTER TABLE reservations ADD CONSTRAINT reservations_total_amount_check CHECK (total_amount >= 0)';
+  END IF;
+END
+$$;
 
 CREATE TABLE IF NOT EXISTS reservation_items (
   id SERIAL PRIMARY KEY,
