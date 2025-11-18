@@ -9,7 +9,7 @@ import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import QRCart from "../components/Cart/QRCart";
 import { formatPrice } from "../utils/format";
-import { useScrollToTop, useScrollToTopOnChange } from "../hooks/useScrollToTop";
+import { useScrollToTop, useScrollToElementOnChange } from "../hooks/useScrollToTop";
 import styles from "./QRTablePage.module.css";
 
 function QRTablePage() {
@@ -33,7 +33,8 @@ function QRTablePage() {
 
   useScrollToTop();
   
-  useScrollToTopOnChange(activeCategory);
+  // Скроллим к фильтру категорий при смене категории
+  useScrollToElementOnChange(activeCategory, "#category-filter");
 
   useEffect(() => {
     const fetchTable = async () => {

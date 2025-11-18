@@ -2,7 +2,7 @@ import { useMenuPaginated } from "../hooks/useMenuPaginated";
 import MenuItemCard from "../components/Menu/MenuItemCard";
 import CategoryFilter from "../components/Menu/CategoryFilter";
 import CartPreview from "../components/Cart/CartPreview";
-import { useScrollToTop, useScrollToTopOnChange } from "../hooks/useScrollToTop";
+import { useScrollToTop, useScrollToElementOnChange } from "../hooks/useScrollToTop";
 import { Link } from "react-router-dom";
 import { CalendarIcon, TableIcon } from "../components/Icons";
 import styles from "./MenuPage.module.css";
@@ -21,8 +21,8 @@ function MenuPage() {
   // Скроллим наверх при загрузке страницы
   useScrollToTop();
   
-  // Скроллим наверх при смене категории
-  useScrollToTopOnChange(activeCategory);
+  // Скроллим к фильтру категорий при смене категории
+  useScrollToElementOnChange(activeCategory, "#category-filter");
 
   if (loading) {
     return (
