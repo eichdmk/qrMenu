@@ -33,27 +33,40 @@ export const useScrollToTopOnChange = (dependency, behavior = 'smooth') => {
  */
 export const useScrollToElementOnChange = (dependency, selector, behavior = 'smooth', offset = 0) => {
   useEffect(() => {
-    let element = null;
-    
-    if (typeof selector === 'string') {
-      // Если селектор - строка, ищем элемент по id или селектору
-      const idSelector = selector.startsWith('#') ? selector : `#${selector}`;
-      element = document.querySelector(idSelector);
-    } else if (selector && selector.current) {
-      // Если селектор - ref объект
-      element = selector.current;
-    }
-    
-    if (element) {
-      if (offset > 0) {
-        // Если есть offset, используем window.scrollTo с расчетом позиции
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - offset;
-        window.scrollTo({ top: offsetPosition, behavior });
-      } else {
-        // Без offset используем стандартный scrollIntoView
-        element.scrollIntoView({ behavior, block: 'start' });
+    // Используем requestAnimationFrame для точного расчета позиции после обновления DOM
+    const scrollToElement = () => {
+      let element = null;
+      
+      if (typeof selector === 'string') {
+        // Если селектор - строка, ищем элемент по id или селектору
+        const idSelector = selector.startsWith('#') ? selector : `#${selector}`;
+        element = document.querySelector(idSelector);
+      } else if (selector && selector.current) {
+        // Если селектор - ref объект
+        element = selector.current;
       }
-    }
+      
+      if (element) {
+        if (offset > 0) {
+          // Если есть offset, используем window.scrollTo с расчетом позиции
+          const rect = element.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const elementTop = rect.top + scrollTop;
+          const offsetPosition = elementTop - offset;
+          window.scrollTo({ top: Math.max(0, offsetPosition), behavior });
+        } else {
+          // Без offset используем стандартный scrollIntoView
+          element.scrollIntoView({ behavior, block: 'start' });
+        }
+      }
+    };
+    
+    // Двойной requestAnimationFrame для гарантии, что DOM обновлен
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Небольшая задержка для завершения рендера данных
+        setTimeout(scrollToElement, 150);
+      });
+    });
   }, [dependency, selector, behavior, offset]);
 };

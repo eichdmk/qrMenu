@@ -33,8 +33,8 @@ function QRTablePage() {
 
   useScrollToTop();
   
-  // Скроллим к фильтру категорий при смене категории (с offset, чтобы было видно первое блюдо)
-  useScrollToElementOnChange(activeCategory, "#category-filter", "smooth", 120);
+  // Скроллим к началу меню при смене категории (с offset, чтобы было видно фильтр и первое блюдо)
+  useScrollToElementOnChange(activeCategory, "#menu-grid", "smooth", 200);
 
   useEffect(() => {
     const fetchTable = async () => {
@@ -178,7 +178,7 @@ function QRTablePage() {
           onCategoryChange={setActiveCategory}
         />
 
-        <div className={styles.menuGrid}>
+        <div className={styles.menuGrid} id="menu-grid">
           {menuItems.map((item, index) => (
             <div
               key={item.id}
