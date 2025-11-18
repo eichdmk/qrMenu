@@ -29,8 +29,9 @@ export const useScrollToTopOnChange = (dependency, behavior = 'smooth') => {
  * @param {any} dependency - Зависимость, при изменении которой происходит скролл
  * @param {string|React.RefObject} selector - Селектор элемента (например, "#menu") или ref объект
  * @param {string} behavior - Поведение скролла: 'smooth' или 'instant' (по умолчанию 'smooth')
+ * @param {number} offset - Смещение в пикселях вверх от элемента (по умолчанию 0)
  */
-export const useScrollToElementOnChange = (dependency, selector, behavior = 'smooth') => {
+export const useScrollToElementOnChange = (dependency, selector, behavior = 'smooth', offset = 0) => {
   useEffect(() => {
     let element = null;
     
@@ -44,7 +45,15 @@ export const useScrollToElementOnChange = (dependency, selector, behavior = 'smo
     }
     
     if (element) {
-      element.scrollIntoView({ behavior, block: 'start' });
+      if (offset > 0) {
+        // Если есть offset, используем window.scrollTo с расчетом позиции
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - offset;
+        window.scrollTo({ top: offsetPosition, behavior });
+      } else {
+        // Без offset используем стандартный scrollIntoView
+        element.scrollIntoView({ behavior, block: 'start' });
+      }
     }
-  }, [dependency, selector, behavior]);
+  }, [dependency, selector, behavior, offset]);
 };

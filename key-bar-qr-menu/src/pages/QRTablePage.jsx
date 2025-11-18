@@ -33,8 +33,8 @@ function QRTablePage() {
 
   useScrollToTop();
   
-  // Скроллим к фильтру категорий при смене категории
-  useScrollToElementOnChange(activeCategory, "#category-filter");
+  // Скроллим к фильтру категорий при смене категории (с offset, чтобы было видно первое блюдо)
+  useScrollToElementOnChange(activeCategory, "#category-filter", "smooth", 120);
 
   useEffect(() => {
     const fetchTable = async () => {
